@@ -4,7 +4,7 @@ from pyrf24 import RF24, RF24_2MBPS, RF24_CRC_16
 address = bytearray([0x75, 0xA5, 0xDC, 0x0A, 0xBB])
 
 CSN_PIN = 0  # aka CE0 on SPI bus 0: /dev/spidev0.0
-CE_PIN = 1
+CE_PIN = 25
 
 radio = RF24(CE_PIN, CSN_PIN)
 

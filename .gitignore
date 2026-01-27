@@ -1,1 +1,46 @@
+# Python
 config
+__pycache__/
+*.py[cod]
+*.py.sic
+.sic
+*.pyc
+.pytest_cache/
+.coverage
+.coverage.*
+*.egg-info/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Build/Artefakte
+web/assets/NOTICES
+build/
+dist/
+*.egg
+*.eggs
+
+# Logs und Temporäres
+*.log
+*.tmp
+*.temp
+.cache/
+tmp/
+temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

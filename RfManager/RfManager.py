@@ -11,7 +11,7 @@ if platform == "linux":
     from pyrf24 import RF24, RF24_2MBPS, RF24_CRC_16
 
 CSN_PIN = 0  # aka CE0 on SPI bus 0: /dev/spidev0.0
-CE_PIN = 1
+CE_PIN = 25
 
 # This is heavily based on the great work done here: https://github.com/joakimjalden/Harmoino/tree/main
 class RfManager:
@@ -57,7 +57,7 @@ class RfManager:
 
 
     def start_listener(self, addresses: [bytes], debug = False):
-        if len(addresses) == 0:
+        if addresses is None or len(addresses) == 0:
             self.logger.warning("No RF addresses specified, skipping listener startup")
             return
 
