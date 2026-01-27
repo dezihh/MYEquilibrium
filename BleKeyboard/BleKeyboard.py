@@ -4,7 +4,8 @@ from random import randint
 
 from bluez_peripheral.advert import Advertisement
 from bluez_peripheral.agent import NoIoAgent
-from bluez_peripheral.util import get_message_bus, Adapter
+from bluez_peripheral.util import get_message_bus
+from bluez_peripheral.adapter import Adapter
 
 from BleKeyboard.BatteryService import BatteryService
 from BleKeyboard.DeviceInformationService import DeviceInformationService
@@ -39,6 +40,7 @@ class BleKeyboard:
     battery_service = None
     device_info_service = None
     hid_service = None
+    agent = None
 
     pressed_keys = []
     pressed_media_keys = []
@@ -55,9 +57,9 @@ class BleKeyboard:
         self.device_info_service = DeviceInformationService()
         self.hid_service = HidService()
 
-        await self.battery_service.register(self.bus, "/me/wehrfritz/bluez_peripheral/service_battery")
-        await self.device_info_service.register(self.bus, "/me/wehrfritz/bluez_peripheral/service_info")
-        await self.hid_service.register(self.bus, "/me/wehrfritz/bluez_peripheral/service_hid")
+        await self.battery_service.register(self.bus, path="/me/wehrfritz/bluez_peripheral/service_battery")
+        await self.device_info_service.register(self.bus, path="/me/wehrfritz/bluez_peripheral/service_info")
+        await self.hid_service.register(self.bus, path="/me/wehrfritz/bluez_peripheral/service_hid")
         self.logger.debug("Registered services")
 
     async def unregister_services(self):
@@ -67,6 +69,12 @@ class BleKeyboard:
             await self.device_info_service.unregister()
         if self.hid_service is not None:
             await self.hid_service.unregister()
+        if self.agent is not None:
+            try:
+                await self.agent.unregister()
+            except Exception:
+                self.logger.warning("Failed to unregister BLE agent", exc_info=True)
+            self.agent = None
 
     async def advertise(self):
         """
@@ -74,20 +82,25 @@ class BleKeyboard:
         Warning: Starting the advertisement might lead to previously connected devices reconnecting.
         """
 
-        agent = NoIoAgent()
-
-        await agent.register(self.bus)
+        if self.agent is None:
+            self.agent = NoIoAgent()
+            await self.agent.register(self.bus, path="/me/wehrfritz/bluez_peripheral/agent")
 
         adapter = await Adapter.get_first(self.bus)
 
         # Start an advert that will last for 60 seconds.
-        advert = Advertisement("Virtual Keyboard", [
-            "0000180F-0000-1000-8000-00805F9B34FB",
-            "0000180A-0000-1000-8000-00805F9B34FB",
-            "00001812-0000-1000-8000-00805F9B34FB"
-        ], 0x03C1, 60)
+        advert = Advertisement(
+            "Virtual Keyboard",
+            [
+                "0000180F-0000-1000-8000-00805F9B34FB",
+                "0000180A-0000-1000-8000-00805F9B34FB",
+                "00001812-0000-1000-8000-00805F9B34FB",
+            ],
+            appearance=0x03C1,
+            timeout=60,
+        )
 
-        await advert.register(self.bus, adapter)
+        await advert.register(self.bus, adapter=adapter)
         self.logger.info("Started advertising!")
 
 

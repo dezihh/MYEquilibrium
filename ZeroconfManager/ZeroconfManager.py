@@ -26,7 +26,8 @@ class ZeroconfManager:
             server=hostname,
         )
 
-        self.zeroconf = AsyncZeroconf(ip_version=IPVersion.All)
+        # Restrict to IPv4 to avoid failures on hosts without IPv6 routing
+        self.zeroconf = AsyncZeroconf(ip_version=IPVersion.V4Only)
         await self.zeroconf.async_register_service(info=self.info)
 
     async def unregister_service(self):
