@@ -1,29 +1,30 @@
 import logging
 import asyncio
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Callable, Awaitable, Optional, Dict
-from dbus_fast.service import ServiceInterface
+from bluez_peripheral.agent import BaseAgent, AgentCapability
 
 
-class PairingAgentBase(ServiceInterface, ABC):
+class PairingAgentBase(BaseAgent):
     """
     Abstract base class for Bluetooth pairing agents.
     Provides common functionality and callback mechanisms for API integration.
+    Inherits from bluez_peripheral.agent.BaseAgent for proper D-Bus integration.
     """
     
-    def __init__(self, pairing_callback: Optional[Callable[[Dict], Awaitable[None]]] = None):
+    def __init__(self, pairing_callback: Optional[Callable[[Dict], Awaitable[None]]] = None, capability: AgentCapability = AgentCapability.KEYBOARD_DISPLAY):
         """
         Initialize pairing agent.
         
         :param pairing_callback: Async callback function for pairing events.
                                  Will be called with dict containing event data.
+        :param capability: Agent capability (KEYBOARD_DISPLAY, DISPLAY_ONLY, etc.)
         """
-        super().__init__("org.bluez.Agent1")
+        super().__init__(capability)
         self.logger = logging.getLogger(self.__class__.__name__)
         self.pairing_callback = pairing_callback
         self.pending_confirmations: Dict[str, asyncio.Future] = {}
-        self.bus = None
-        self.agent_path: Optional[str] = None
+        self._export_bus = None
     
     async def _notify_event(self, event_data: Dict):
         """
@@ -86,8 +87,18 @@ class PairingAgentBase(ServiceInterface, ABC):
         :return: Dict with device info (path, address, name)
         """
         try:
-            introspection = await self.bus.introspect("org.bluez", device_path)
-            proxy_object = self.bus.get_proxy_object("org.bluez", device_path, introspection)
+            # Get bus from BaseAgent (stored as _export_bus)
+            bus = self._export_bus
+            if not bus:
+                self.logger.error("Bus not available for device info retrieval")
+                return {
+                    "path": device_path,
+                    "address": "unknown",
+                    "name": "Unknown Device"
+                }
+            
+            introspection = await bus.introspect("org.bluez", device_path)
+            proxy_object = bus.get_proxy_object("org.bluez", device_path, introspection)
             device_interface = proxy_object.get_interface("org.bluez.Device1")
             
             address = await device_interface.get_address()
@@ -106,54 +117,26 @@ class PairingAgentBase(ServiceInterface, ABC):
                 "name": "Unknown Device"
             }
 
-    async def register(self, bus, path: str = "/me/wehrfritz/equilibrium/agent", capability: str = "KeyboardDisplay"):
+    async def register(self, bus, path: str = "/me/wehrfritz/equilibrium/agent", capability: str = None):
         """
         Register this agent with BlueZ AgentManager1.
-        Mirrors the behavior of bluez_peripheral NoIoAgent.register.
+        Uses bluez_peripheral's BaseAgent.register method.
         
-        Capabilities:
-        - "DisplayOnly" - Display PIN to user (Fire TV / Android TV)
-        - "KeyboardDisplay" - Display PIN and get confirmation (default)
-        - "NoInputNoOutput" - Auto-accept
+        Note: capability parameter is ignored - set via __init__
         """
-        self.bus = bus
-        self.agent_path = path
-
-        # Export the service interface (dbus_fast export is synchronous)
-        self.bus.export(path, self)
-
-        # Register with AgentManager1
-        introspection = await self.bus.introspect("org.bluez", "/org/bluez")
-        manager = self.bus.get_proxy_object("org.bluez", "/org/bluez", introspection).get_interface("org.bluez.AgentManager1")
-
-        await manager.call_register_agent(path, capability)
-        await manager.call_request_default_agent(path)
-
-        self.logger.info(f"Agent registered at {path} with capability {capability}")
+        await super().register(bus, path=path, default=True)
+        self.logger.info(f"Agent registered at {path}")
 
     async def unregister(self):
         """
         Unregister this agent from BlueZ AgentManager1 and unexport from D-Bus.
+        Uses bluez_peripheral's BaseAgent.unregister method.
         """
-        if not self.bus or not self.agent_path:
-            return
-
         try:
-            introspection = await self.bus.introspect("org.bluez", "/org/bluez")
-            manager = self.bus.get_proxy_object("org.bluez", "/org/bluez", introspection).get_interface("org.bluez.AgentManager1")
-            await manager.call_unregister_agent(self.agent_path)
+            await super().unregister()
+            self.logger.info(f"Agent unregistered")
         except Exception as e:
-            self.logger.warning(f"Failed to unregister agent from BlueZ: {e}")
-
-        try:
-            # unexport is synchronous on dbus_fast
-            self.bus.unexport(self.agent_path)
-        except Exception as e:
-            self.logger.warning(f"Failed to unexport agent path: {e}")
-
-        self.logger.info(f"Agent unregistered from {self.agent_path}")
-        self.agent_path = None
-    
+            self.logger.warning(f"Failed to unregister agent: {e}")
     @abstractmethod
     async def handle_pairing_request(self, device_path: str) -> bool:
         """

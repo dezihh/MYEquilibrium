@@ -66,7 +66,7 @@ class RemoteHidService(Service):
     
     # Report Characteristic (Input)
     # UUID: 0x2A4D
-    @characteristic("2A4D", CharFlags.SECURE_READ | CharFlags.NOTIFY)
+    @characteristic("2A4D", CharFlags.READ | CharFlags.NOTIFY)
     def report(self, options):
         """
         HID Input Report.

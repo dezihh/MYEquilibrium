@@ -59,6 +59,8 @@ async def test_pairing():
     Test pairing functionality.
     """
     manager = BluetoothManager()
+    known_devices = {}
+    removed_devices = set()
     
     try:
         # Initialize with secure pairing
@@ -93,6 +95,29 @@ async def test_pairing():
             pending = manager.get_pending_pairing_requests()
             if pending:
                 logger.info(f"Pending pairing requests: {pending}")
+
+            # Poll device list to see if TV connects/pairs
+            devices = await manager.get_devices()
+            for device in devices:
+                key = device.get("address") or device.get("path")
+                if not key:
+                    continue
+
+                prev = known_devices.get(key)
+                if prev != device:
+                    logger.info(f"Device state changed: {device}")
+                    known_devices[key] = device
+
+                # If device is paired but never connects, remove once to force fresh pairing
+                if device.get("paired") and not device.get("connected"):
+                    addr = device.get("address")
+                    if addr and addr not in removed_devices:
+                        logger.info(f"Removing device {addr} to force fresh pairing")
+                        try:
+                            await manager.remove_device(addr)
+                            removed_devices.add(addr)
+                        except Exception as e:
+                            logger.warning(f"Failed to remove device {addr}: {e}")
             
             await asyncio.sleep(1)
     

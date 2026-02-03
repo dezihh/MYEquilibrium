@@ -1,244 +1,189 @@
 import logging
+import asyncio
 from typing import Optional, Callable, Awaitable, Dict
 from dbus_fast.service import method
-from BluetoothManager.agents.PairingAgentBase import PairingAgentBase
+from bluez_peripheral.agent import BaseAgent, AgentCapability, RejectedError
 
 
-class SecurePairingAgent(PairingAgentBase):
+class SecurePairingAgent(BaseAgent):
     """
     Secure Bluetooth pairing agent with PIN display and user confirmation.
     Suitable for Android TV / Fire TV Remote Control pairing.
-    
-    Implements org.bluez.Agent1 interface with DisplayYesNo capability.
     """
     
     def __init__(self, pairing_callback: Optional[Callable[[Dict], Awaitable[None]]] = None):
-        """
-        Initialize secure pairing agent.
-        
-        :param pairing_callback: Async callback for pairing events (sent to WebSocket/API)
-        """
-        super().__init__(pairing_callback)
+        super().__init__(AgentCapability.DISPLAY_YES_NO)
         self.logger = logging.getLogger(__name__)
+        self.pairing_callback = pairing_callback
+        self.pending_confirmations: Dict[str, asyncio.Future] = {}
     
-    @method()
-    async def RequestAuthorization(self, device: "o"):
-        """
-        BlueZ requests authorization for a device connection.
-        User must explicitly approve.
-        
-        :param device: DBus object path of the device
-        """
+    async def _notify_event(self, event_data: Dict):
+        if self.pairing_callback:
+            try:
+                await self.pairing_callback(event_data)
+            except Exception as e:
+                self.logger.error(f"Error in pairing callback: {e}", exc_info=True)
+    
+    async def _wait_for_confirmation(self, device_path: str, timeout: int = 30) -> bool:
+        future = asyncio.Future()
+        self.pending_confirmations[device_path] = future
+        try:
+            result = await asyncio.wait_for(future, timeout=timeout)
+            return result
+        except asyncio.TimeoutError:
+            self.logger.warning(f"Pairing timeout for device {device_path}")
+            await self._notify_event({
+                "type": "pairing_timeout",
+                "device_path": device_path,
+                "message": "Pairing-Timeout"
+            })
+            return False
+        finally:
+            if device_path in self.pending_confirmations:
+                del self.pending_confirmations[device_path]
+    
+    async def confirm_from_api(self, device_path: str, confirmed: bool):
+        if device_path in self.pending_confirmations:
+            future = self.pending_confirmations[device_path]
+            if not future.done():
+                future.set_result(confirmed)
+                self.logger.info(f"Pairing {'confirmed' if confirmed else 'rejected'}")
+    
+    async def _get_device_info(self, device_path: str) -> Dict:
+        try:
+            bus = self._export_bus
+            if not bus:
+                return {"path": device_path, "address": "unknown", "name": "Unknown"}
+            
+            introspection = await bus.introspect("org.bluez", device_path)
+            proxy = bus.get_proxy_object("org.bluez", device_path, introspection)
+            device_iface = proxy.get_interface("org.bluez.Device1")
+            
+            address = await device_iface.get_address()
+            alias = await device_iface.get_alias()
+            
+            return {"path": device_path, "address": address, "name": alias}
+        except Exception as e:
+            self.logger.error(f"Failed to get device info: {e}")
+            return {"path": device_path, "address": "unknown", "name": "Unknown"}
+    
+    @method("RequestAuthorization")
+    async def _request_authorization(self, device: "o"):
         self.logger.info("\n" + "%" * 70)
         self.logger.info("%%% RequestAuthorization called %%%")
-        self.logger.info("%%% Device wants to connect %%%")
         self.logger.info("%" * 70 + "\n")
         
         device_info = await self._get_device_info(device)
-        
-        self.logger.info(f"Authorization request from {device_info['name']} ({device_info['address']})")
+        self.logger.info(f"Auth request from {device_info['name']} ({device_info['address']})")
         
         await self._notify_event({
             "type": "authorization_request",
             "device": device_info,
-            "message": f"Gerät '{device_info['name']}' möchte sich verbinden. Zulassen?"
+            "message": f"Gerät '{device_info['name']}' möchte sich verbinden"
         })
         
-        # Wait for user decision
         confirmed = await self._wait_for_confirmation(device, timeout=30)
-        
         if not confirmed:
-            self.logger.info(f"Authorization rejected for {device_info['name']}")
-            raise Exception("org.bluez.Error.Rejected")
+            raise RejectedError("Authorization rejected")
         
         self.logger.info(f"Authorization granted for {device_info['name']}")
     
-    @method()
-    def RequestPinCode(self, device: "o") -> "s":
-        """
-        Legacy pairing - BlueZ requests us to provide a PIN.
-        Return fixed PIN (Android TV/Fire TV might use this!).
-        
-        :param device: DBus object path of the device
-        :return: PIN code string ("0000" or similar)
-        """
-        self.logger.info("\n" + "!" * 70)
-        self.logger.info("!!! RequestPinCode called (LEGACY) !!!")
-        self.logger.info("!!! Device wants PIN from US !!!")
-        self.logger.info("!" * 70 + "\n")
-        
-        pin = "0000"  # Default PIN
-        
+    @method("RequestPinCode")
+    def _request_pin_code(self, device: "o") -> "s":
+        self.logger.info("\n!!! RequestPinCode called !!!\n")
+        pin = "0000"
         self.logger.info(f"Returning PIN: {pin}")
         return pin
     
-    @method()
-    def RequestPasskey(self, device: "o") -> "u":
-        """
-        Bluetooth LE pairing - BlueZ requests numeric passkey from us.
-        Return fixed 6-digit passkey.
-        
-        :param device: DBus object path of the device
-        :return: Numeric passkey (0-999999)
-        """
-        self.logger.info("\n" + "!" * 70)
-        self.logger.info("!!! RequestPasskey called !!!")
-        self.logger.info("!!! Device wants PASSKEY from US !!!")
-        self.logger.info("!" * 70 + "\n")
-        
-        passkey = 123456  # Fixed passkey
-        
+    @method("RequestPasskey")
+    def _request_passkey(self, device: "o") -> "u":
+        self.logger.info("\n!!! RequestPasskey called !!!\n")
+        passkey = 123456
         self.logger.info(f"Returning passkey: {passkey:06d}")
         return passkey
     
-    @method()
-    async def DisplayPasskey(self, device: "o", passkey: "u", entered: "q"):
-        """
-        Display 6-digit PIN code. User enters this on the target device (e.g., Fire TV).
-        
-        :param device: DBus object path of the device
-        :param passkey: 6-digit passkey (0-999999)
-        :param entered: Number of digits already entered
-        """
-        self.logger.info("\n" + "*" * 70)
-        self.logger.info("*** DisplayPasskey called ***")
-        self.logger.info("*** We show PIN, device enters it ***")
-        self.logger.info("*" * 70 + "\n")
+    @method("DisplayPasskey")
+    async def _display_passkey(self, device: "o", passkey: "u", entered: "q"):
+        self.logger.info("\n*** DisplayPasskey called ***\n")
         
         device_info = await self._get_device_info(device)
         pin = f"{passkey:06d}"
         
-        self.logger.info(f"Displaying passkey {pin} for {device_info['name']} (entered: {entered})")
-        
-        # Log PIN prominently
         self.logger.info("\n" + "=" * 70)
-        self.logger.info(f"*** PIN CODE FOR {device_info['name'].upper()} ***")
-        self.logger.info(f"*** {pin} ***")
-        self.logger.info("Enter this PIN on your device!")
+        self.logger.info(f"PIN CODE: {pin}")
         self.logger.info("=" * 70 + "\n")
         
         await self._notify_event({
             "type": "display_passkey",
             "device": device_info,
             "pin": pin,
-            "entered_digits": entered,
-            "message": f"Geben Sie diesen PIN auf '{device_info['name']}' ein: {pin}"
+            "message": f"PIN für '{device_info['name']}': {pin}"
         })
     
-    @method()
-    async def RequestConfirmation(self, device: "o", passkey: "u"):
-        """
-        Both devices display PIN - user confirms they match.
-        Common for Fire TV / Android TV pairing.
-        
-        :param device: DBus object path of the device
-        :param passkey: 6-digit passkey to confirm
-        """
-        self.logger.info("\n" + "#" * 70)
-        self.logger.info("### RequestConfirmation called ###")
-        self.logger.info("### Both devices show same PIN - confirm it matches ###")
-        self.logger.info("#" * 70 + "\n")
+    @method("RequestConfirmation")
+    async def _request_confirmation(self, device: "o", passkey: "u"):
+        self.logger.info("\n### RequestConfirmation called ###\n")
         
         device_info = await self._get_device_info(device)
         pin = f"{passkey:06d}"
         
-        self.logger.info(f"Requesting confirmation for passkey {pin} with {device_info['name']}")
-        
-        # Log PIN prominently
         self.logger.info("\n" + "=" * 70)
-        self.logger.info(f"*** CONFIRM THIS PIN MATCHES ON {device_info['name'].upper()} ***")
-        self.logger.info(f"*** {pin} ***")
+        self.logger.info(f"CONFIRM PIN MATCHES: {pin}")
         self.logger.info("=" * 70 + "\n")
         
         await self._notify_event({
             "type": "confirm_passkey",
             "device": device_info,
             "pin": pin,
-            "message": f"Wird dieser PIN auf '{device_info['name']}' angezeigt?\n\n{pin}"
+            "message": f"PIN bestätigen: {pin}?"
         })
         
         confirmed = await self._wait_for_confirmation(device, timeout=30)
-        
         if not confirmed:
-            self.logger.info(f"Passkey confirmation rejected for {device_info['name']}")
-            raise Exception("org.bluez.Error.Canceled")
+            raise RejectedError("Confirmation rejected")
         
         self.logger.info(f"Passkey confirmed for {device_info['name']}")
     
-    @method()
-    async def AuthorizeService(self, device: "o", uuid: "s"):
-        """
-        Authorize a specific service (e.g., HID).
-        Auto-approve HID service after successful pairing.
-        
-        :param device: DBus object path of the device
-        :param uuid: Service UUID
-        """
-        self.logger.info("\n" + "@" * 70)
-        self.logger.info("@@@ AuthorizeService called @@@")
-        self.logger.info(f"@@@ Service UUID: {uuid} @@@")
-        self.logger.info("@" * 70 + "\n")
+    @method("AuthorizeService")
+    async def _authorize_service(self, device: "o", uuid: "s"):
+        self.logger.info(f"\n@@@ AuthorizeService: {uuid} @@@\n")
         
         device_info = await self._get_device_info(device)
         
-        # Auto-approve HID service (0x1812)
+        # Auto-approve HID service
         if uuid.lower() == "00001812-0000-1000-8000-00805f9b34fb":
-            self.logger.info(f"Auto-authorized HID service for {device_info['name']}")
+            self.logger.info(f"Auto-authorized HID service")
             return
-        
-        self.logger.info(f"Authorization request for service {uuid} from {device_info['name']}")
         
         await self._notify_event({
             "type": "authorize_service",
             "device": device_info,
             "service_uuid": uuid,
-            "message": f"Service {uuid} für '{device_info['name']}' autorisieren?"
+            "message": f"Service {uuid} autorisieren?"
         })
         
         confirmed = await self._wait_for_confirmation(device, timeout=15)
-        
         if not confirmed:
-            self.logger.info(f"Service authorization rejected for {device_info['name']}")
-            raise Exception("org.bluez.Error.Rejected")
+            raise RejectedError("Service authorization rejected")
         
-        self.logger.info(f"Service authorized for {device_info['name']}")
+        self.logger.info(f"Service authorized")
     
-    @method()
-    def Cancel(self):
-        """
-        Pairing was canceled (timeout, user cancel, etc.)
-        Clean up all pending confirmations.
-        """
+    @method("Cancel")
+    def _cancel(self):
         self.logger.warning("Pairing canceled")
         
-        # Cancel all pending confirmations
         for device, future in list(self.pending_confirmations.items()):
             if not future.done():
                 future.set_exception(Exception("Pairing cancelled"))
         
         self.pending_confirmations.clear()
         
-        # Notify via callback
         asyncio.create_task(self._notify_event({
             "type": "pairing_cancelled",
             "message": "Pairing wurde abgebrochen"
         }))
-    
-    async def handle_pairing_request(self, device_path: str) -> bool:
-        """
-        Handle pairing request (implementation of abstract method).
-        
-        :param device_path: DBus path of the device
-        :return: True if pairing accepted
-        """
-        # This is handled via the BlueZ callbacks (RequestAuthorization, etc.)
-        # This method is for programmatic pairing initiation
-        device_info = await self._get_device_info(device_path)
-        
-        await self._notify_event({
-            "type": "pairing_initiated",
-            "device": device_info,
-            "message": f"Pairing mit '{device_info['name']}' wird gestartet..."
-        })
-        
-        return True
+
+    @method("DisplayPinCode")
+    def _display_pin_code(self, device: "o", pincode: "s"):
+        self.logger.info("\n*** DisplayPinCode called ***\n")
+        self.logger.info(f"PIN CODE: {pincode}")

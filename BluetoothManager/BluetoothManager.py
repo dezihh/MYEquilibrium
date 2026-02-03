@@ -1,6 +1,7 @@
 import logging
 import asyncio
 from typing import Dict, Optional, Callable, Awaitable
+from dbus_fast import Variant
 from bluez_peripheral.util import get_message_bus
 from bluez_peripheral.adapter import Adapter
 from bluez_peripheral.advert import Advertisement
@@ -50,14 +51,13 @@ class BluetoothManager:
         # Get Bluetooth adapter
         self.adapter = await Adapter.get_first(self.bus)
         self.logger.debug(f"Using Bluetooth adapter: {self.adapter}")
-
+        
         # Initialize pairing agent
         if pairing_mode == "secure":
             self.agent = SecurePairingAgent(pairing_callback=self._handle_pairing_event)
-            # Use "DisplayOnly" for Android TV/Fire TV - they generate the PIN and we display it
-            await self.agent.register(self.bus, path="/me/wehrfritz/equilibrium/agent", capability="DisplayOnly")
-            self.agent.bus = self.bus
-            self.logger.info("Registered SecurePairingAgent with DisplayOnly capability")
+            # Register with bluez_peripheral's BaseAgent.register (no capability needed, it's set in __init__)
+            await self.agent.register(self.bus, path="/me/wehrfritz/equilibrium/agent")
+            self.logger.info("Registered SecurePairingAgent")
         else:
             from bluez_peripheral.agent import NoIoAgent
             self.agent = NoIoAgent()
@@ -202,16 +202,14 @@ class BluetoothManager:
             address = device.get("Address")
             paired = device.get("Paired", False)
             connected = device.get("Connected", False)
-            trusted = device.get("Trusted", False)
-
+            
             if address and alias:
                 devices.append({
                     "path": path,
                     "address": address.value if hasattr(address, 'value') else address,
                     "name": alias.value if hasattr(alias, 'value') else alias,
                     "paired": paired.value if hasattr(paired, 'value') else paired,
-                    "connected": connected.value if hasattr(connected, 'value') else connected,
-                    "trusted": trusted.value if hasattr(trusted, 'value') else trusted
+                    "connected": connected.value if hasattr(connected, 'value') else connected
                 })
 
         return devices
@@ -247,7 +245,7 @@ class BluetoothManager:
         if trust:
             await device_interface.set_trusted(True)
             self.logger.info(f"Device {device_address} trusted (persistent bond)")
-
+    
     async def confirm_pairing(self, device_path: str, confirmed: bool):
         """
         Confirm or reject a pairing request.
