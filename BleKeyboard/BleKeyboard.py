@@ -2,6 +2,8 @@ import asyncio
 import logging
 from random import randint
 
+from dbus_fast import Variant
+
 from bluez_peripheral.advert import Advertisement
 from bluez_peripheral.agent import NoIoAgent
 from bluez_peripheral.util import get_message_bus
@@ -41,6 +43,8 @@ class BleKeyboard:
     device_info_service = None
     hid_service = None
     agent = None
+    active_advertisement = None
+    _connection_monitor_task = None
 
     pressed_keys = []
     pressed_media_keys = []
@@ -49,8 +53,46 @@ class BleKeyboard:
     async def create(cls):
         self = cls()
         self.bus = await get_message_bus()
+        await self._ensure_adapter_state()
         await self.register_services()
+        await self.advertise()
+        if self._connection_monitor_task is None:
+            self._connection_monitor_task = asyncio.create_task(self._connection_monitor())
         return self
+
+    async def _ensure_adapter_state(self):
+        try:
+            adapter_path = "/org/bluez/hci0"
+            introspection = await self.bus.introspect("org.bluez", adapter_path)
+            proxy = self.bus.get_proxy_object("org.bluez", adapter_path, introspection)
+            props_iface = proxy.get_interface("org.freedesktop.DBus.Properties")
+
+            await props_iface.call_set("org.bluez.Adapter1", "Powered", Variant("b", True))
+            await props_iface.call_set("org.bluez.Adapter1", "DiscoverableTimeout", Variant("u", 0))
+            await props_iface.call_set("org.bluez.Adapter1", "PairableTimeout", Variant("u", 0))
+            await props_iface.call_set("org.bluez.Adapter1", "Discoverable", Variant("b", True))
+            await props_iface.call_set("org.bluez.Adapter1", "Pairable", Variant("b", True))
+            try:
+                await props_iface.call_set("org.bluez.Adapter1", "Privacy", Variant("s", "off"))
+            except Exception:
+                pass
+        except Exception:
+            self.logger.warning("Failed to set adapter state", exc_info=True)
+
+    async def _connection_monitor(self, interval: float = 5.0):
+        while True:
+            try:
+                await asyncio.sleep(interval)
+                await self._ensure_adapter_state()
+
+                devices = await self.devices
+                any_connected = any(d.get("connected") for d in devices)
+                if not any_connected and self.active_advertisement is None:
+                    await self.advertise()
+            except asyncio.CancelledError:
+                break
+            except Exception:
+                self.logger.debug("Connection monitor error", exc_info=True)
 
     async def register_services(self):
         self.battery_service = BatteryService()
@@ -75,6 +117,15 @@ class BleKeyboard:
             except Exception:
                 self.logger.warning("Failed to unregister BLE agent", exc_info=True)
             self.agent = None
+        if self.active_advertisement is not None:
+            try:
+                await self.active_advertisement.unregister()
+            except Exception:
+                self.logger.warning("Failed to unregister BLE advertisement", exc_info=True)
+            self.active_advertisement = None
+        if self._connection_monitor_task is not None:
+            self._connection_monitor_task.cancel()
+            self._connection_monitor_task = None
 
     async def advertise(self):
         """
@@ -88,6 +139,13 @@ class BleKeyboard:
 
         adapter = await Adapter.get_first(self.bus)
 
+        if self.active_advertisement is not None:
+            try:
+                await self.active_advertisement.unregister()
+            except Exception:
+                self.logger.debug("Failed to stop previous advertisement", exc_info=True)
+            self.active_advertisement = None
+
         # Start an advert that will last for 60 seconds.
         advert = Advertisement(
             "Virtual Keyboard",
@@ -97,10 +155,11 @@ class BleKeyboard:
                 "00001812-0000-1000-8000-00805F9B34FB",
             ],
             appearance=0x03C1,
-            timeout=60,
+            timeout=0,
         )
 
         await advert.register(self.bus, adapter=adapter)
+        self.active_advertisement = advert
         self.logger.info("Started advertising!")
 
 
