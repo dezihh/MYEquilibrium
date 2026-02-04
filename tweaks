@@ -1,0 +1,34 @@
+rm -f pairing_attempt.log; sudo sh -c 'stdbuf -oL btmon | tee pairing_attempt.log'
+sudo sh -c 'stdbuf -oL btmon | tee pairing_attempt.log'
+
+
+
+
+
+
+
+---------------------
+Advertising Data (15 Bytes):
+
+text
+02 01 06        # Flags: LE General Discoverable, BR/EDR not supported
+0A 16 12 18 0F 18 0A 18  # 16-bit Service UUIDs: 1812(HID), 180F(Battery), 180A(Device Info)
+09 03 C1 03     # Appearance: Keyboard (0x03C1)  
+02 0A 00        # Tx Power Level: 0 dBm
+Scan Response Data (18 Bytes):
+
+text
+Virtual Keyboard  # Name als UTF-8 String
+Advertising Parameters:
+
+Interval: 1280ms (0x0800)
+
+Type: Connectable undirected (ADV_IND)
+
+Own address: Public
+-- nach erfolgreicher kopplung:
+✅ Pairing war erfolgreich mit Security Manager (SMP) Exchange
+
+✅ Verschlüsselung aktiviert (LTK ausgetauscht)
+
+✅ HID Dienste entdeckt - Nokia liest HID Report Map (Zeile 199-200)
