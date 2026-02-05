@@ -638,8 +638,17 @@ class RemoteController:
 
         return ble_devices
 
-    async def ble_connect(self, address: str):
-        await self.ble_keyboard.connect(address)
+    async def ble_connect(self, address: str) -> bool:
+        """
+        Connect to a BLE device (typically Android TV).
+        
+        :param address: MAC address of the device
+        :return: True if successfully connected, False otherwise
+        """
+        result = await self.ble_keyboard.connect(address)
+        if not result:
+            self.logger.error(f"Failed to connect to BLE device {address}")
+        return result
 
     async def ble_disconnect(self):
         await self.ble_keyboard.disconnect()
