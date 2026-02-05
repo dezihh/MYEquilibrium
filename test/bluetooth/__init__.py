@@ -1,3 +1,0 @@
-"""
-Bluetooth Test Scripts
-"""
