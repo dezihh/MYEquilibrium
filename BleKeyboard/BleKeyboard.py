@@ -311,6 +311,7 @@ class BleKeyboard:
             address = device.get("Address")
             paired = device.get("Paired", False)
             connected = device.get("Connected", False)
+            trusted = device.get("Trusted", False)
 
             # Extract actual values from Variant objects
             paired_value = paired.value if hasattr(paired, 'value') else paired
@@ -449,3 +450,38 @@ class BleKeyboard:
                     await interface.call_disconnect()
                 else:
                     self.logger.error("No path found for connected device")
+
+    async def remove_device(self, address: str) -> bool:
+        """
+        Remove (forget) a device from BlueZ.
+
+        :param address: MAC address of the device to remove
+        :return: True if removed, False otherwise
+        """
+        devices = await self.devices
+        device_path = None
+
+        for device in devices:
+            if device.get("address") == address:
+                device_path = device.get("path")
+                break
+
+        if not device_path:
+            self.logger.error(f"Device {address} not found")
+            return False
+
+        try:
+            adapter_path = "/org/bluez/hci0"
+            introspection = await self.bus.introspect("org.bluez", adapter_path)
+            adapter_interface = self.bus.get_proxy_object(
+                "org.bluez",
+                adapter_path,
+                introspection
+            ).get_interface("org.bluez.Adapter1")
+
+            await adapter_interface.call_remove_device(device_path)
+            self.logger.info(f"Device {address} removed from BlueZ")
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to remove device {address}: {e}")
+            return False

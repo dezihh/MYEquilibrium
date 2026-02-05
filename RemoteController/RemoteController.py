@@ -652,3 +652,15 @@ class RemoteController:
 
     async def ble_disconnect(self):
         await self.ble_keyboard.disconnect()
+
+    async def ble_remove(self, address: str) -> bool:
+        """
+        Remove (forget) a BLE device.
+
+        :param address: MAC address of the device
+        :return: True if removed, False otherwise
+        """
+        result = await self.ble_keyboard.remove_device(address)
+        if not result:
+            self.logger.error(f"Failed to remove BLE device {address}")
+        return result
