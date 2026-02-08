@@ -338,8 +338,9 @@ def encode_to_raw(protocol, address, command, frequency=38000):
             params['sub_device'] = sub_device
             params['function'] = func
         elif 'Samsung' in pyir_proto_name:
-            params['custom'] = (device << 8) | sub_device
-            params['data'] = func
+            params['device'] = device
+            params['sub_device'] = sub_device
+            params['function'] = func
         elif 'Sony' in pyir_proto_name:
             params['device'] = device
             params['function'] = func
