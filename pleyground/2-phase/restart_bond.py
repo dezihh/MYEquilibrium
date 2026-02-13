@@ -37,6 +37,24 @@ def find_adapter():
         if ADAPTER_IFACE in i: return p
     return None
 
+def print_existing_gatt_services():
+    om = dbus.Interface(bus.get_object(BLUEZ, '/'), 'org.freedesktop.DBus.ObjectManager')
+    managed = om.GetManagedObjects()
+    found = []
+    log("Registered GATT-Services im System:", "WARN")
+    for path, obj in managed.items():
+        svc = obj.get('org.bluez.GattService1')
+        if svc:
+            uuid = svc.get('UUID', '<keine UUID>')
+            prim = svc.get('Primary', False)
+            log(f"GATT at {path} - UUID: {uuid} - {'Primary' if prim else 'Secondary'}", "WARN")
+            found.append((path, uuid))
+    if not found:
+        log("Keine GATT-Services registriert.", "OK")
+    else:
+        log(f"Insgesamt {len(found)} GATT-Services im System.", "WARN")
+    return found
+
 adapter = find_adapter()
 if not adapter:
     log('Kein Adapter gefunden', "ERR")
@@ -198,6 +216,7 @@ def stop_advertising():
 
 def main():
     log('BLE Keyboard – RECONNECT DEMO (Script 2).')
+    print_existing_gatt_services()
     agent = Agent()
     mgr = dbus.Interface(bus.get_object(BLUEZ, '/org/bluez'), 'org.bluez.AgentManager1')
     mgr.RegisterAgent(AGENT_PATH, 'NoInputNoOutput')
