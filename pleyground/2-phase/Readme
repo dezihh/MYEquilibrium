@@ -7,3 +7,55 @@ AlreadyExists bei Registrierung wird sauber erkannt und mit explizitem Unregiste
 Auch beim Disconnect sowie in allen Fehlerfällen bekommst du eine sofort lesbare Rückmeldung.
 Du kannst dieses Skript beliebig oft stoppen und starten – alle Ereignisse inklusive BlueZ-Verhalten sind glasklar nachverfolgbar.
 
+
+Zentrale Begriffe & Muster im bluetoothd-Log
+1. GATT-Service Registration/Deregistration
+
+Registrierung eines GATT-Servers und seiner Services:
+  bluetoothd[PID]: Registered GATT application at /org/bluez/...
+  bluetoothd[PID]: GATT server registered for :1.123
+Fehlgeschlagen (“AlreadyExists”/“busy”):
+  bluetoothd[PID]: Failed to register application: Already Exists
+Deregistrierung/Entfernen eines GATT-Servers (meist bei sauberen Unregister oder Echtprozessende):
+  bluetoothd[PID]: Unregistered GATT application at /org/bluez/...
+  bluetoothd[PID]: GATT server removed for :1.123
+2. Advertisement Registration/Unregistration
+
+Erfolgreiches Registrieren eines LE-Advertisements:
+  bluetoothd[PID]: Registered advertisement: /org/bluez/blekbd/adv0
+Deregistrierung:
+  bluetoothd[PID]: Unregistered advertisement: /org/bluez/blekbd/adv0
+Fehler oder AlreadyExists:
+  bluetoothd[PID]: Failed to register advertisement: Already Exists
+3. Verbindungsmanagement/Bonding
+
+Gekoppelter Client (Bonding):
+  bluetoothd[PID]: Device [MAC] ... (paired)
+Oder:
+
+  bluetoothd[PID]: Paired: yes
+Neuverbindung/Reconnection zu bekanntem Device:
+  bluetoothd[PID]: Device [MAC] connected
+(Wichtig: Hier siehst du nach Script-Neustart, dass wieder eine Verbindung zustande kommt.)
+
+Trennung eines Devices:
+  bluetoothd[PID]: Device [MAC] disconnected
+Was korreliert mit welchem Schritt im Script?
+Table
+
+
+Script-Event	Wichtige Log-Zeilen (Ausschnitt/Muster)
+Script startet & registriert GATT-Service	Registered GATT application at ...
+Script startet & registriert advertise	Registered advertisement: /org/bluez/blekbd/adv0
+AlreadyExists/Fehler bei Registry	Failed to register application: Already Exists
+Script beendet/sauberer Unregister	Unregistered GATT application at ... 
+ GATT server removed ...
+Device verbindet (Client)	Device MAC connected
+Device trennt	Device MAC disconnected
+Pairing erfolgreich	Paired: yes, Adapter: ...  
+ oder Device MAC ... paired
+Reconnect nach Script-Neustart	Device MAC connected (NACH neuem "Registered GATT application ...")
+Advertising neu gestartet (nach Disconnect)	Registered advertisement: ...
+
+sudo strace -ff -e trace=write -p $(pidof bluetoothd) 2>&1 | grep --line-buffered '"write(' > bt_trace.log
+sudo socat exec:'bluetoothd -n --debug -f ./mainconf',pty,stderr,setsid,ctty stdout
