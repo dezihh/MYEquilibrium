@@ -1,3 +1,9 @@
 Du kannst mit Script 1 koppeln (bonding), Script stoppen und jederzeit mit Script 2 weiterarbeiten – ohne erneut pairen zu müssen.
 Beide Scripte verwenden exakt dieselben UUIDs und Strukturen.
 
+script reconnect:
+Jeder Schritt wird farbig und sekundengenau geloggt, sowohl Erfolg als auch Fehler!
+AlreadyExists bei Registrierung wird sauber erkannt und mit explizitem Unregister + Zeitverzögerung behandelt.
+Auch beim Disconnect sowie in allen Fehlerfällen bekommst du eine sofort lesbare Rückmeldung.
+Du kannst dieses Skript beliebig oft stoppen und starten – alle Ereignisse inklusive BlueZ-Verhalten sind glasklar nachverfolgbar.
+
