@@ -1,0 +1,878 @@
+
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#127]
+bluetoothd[34051]: [:1.37:method_return] < [#127]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#128]
+bluetoothd[34051]: [:1.37:method_return] < [#128]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#129]
+bluetoothd[34051]: [:1.37:method_return] < [#129]
+bluetoothd[34051]: [:1.37:method_call] > org.bluez.Device1.Disconnect [#130]
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: connected -> disconnecting (0)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: disconnecting -> disconnected (0)
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#131]
+bluetoothd[34051]: [:1.37:method_return] < [#131]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Properties.Set [#132]
+bluetoothd[34051]: [:1.37:method_return] < [#132]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Properties.Set [#133]
+bluetoothd[34051]: [:1.37:method_return] < [#133]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Properties.Set [#134]
+bluetoothd[34051]: [:1.37:method_return] < [#134]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Properties.Set [#135]
+bluetoothd[34051]: [:1.37:method_return] < [#135]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Properties.Set [#136]
+bluetoothd[34051]: [:1.37:method_return] < [#136]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Properties.Set [#137]
+bluetoothd[34051]: [:1.37:error] < org.freedesktop.DBus.Error.UnknownProperty [#137]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#138]
+bluetoothd[34051]: [:1.37:method_return] < [#138]
+bluetoothd[34051]: [:1.37:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#139]
+bluetoothd[34051]: [:1.37:method_return] < [#139]
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0014
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] event 0x000c
+bluetoothd[34051]: src/adapter.c:dev_disconnected() Device 22:22:09:C3:08:3D disconnected, reason 2
+bluetoothd[34051]: src/adapter.c:adapter_remove_connection()
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [signal] org.bluez.Bearer.LE1.Disconnected
+bluetoothd[34051]: [signal] org.bluez.Device1.Disconnected
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.37:method_return] < [#130]
+bluetoothd[34051]: plugins/policy.c:disconnect_cb() reason 2
+bluetoothd[34051]: src/adapter.c:bonding_attempt_complete() hci0 bdaddr 22:22:09:C3:08:3D type 1 status 0xe
+bluetoothd[34051]: src/device.c:device_bonding_complete() bonding (nil) status 0x0e
+bluetoothd[34051]: src/device.c:device_bonding_failed() status 14
+bluetoothd[34051]: src/adapter.c:resume_discovery()
+bluetoothd[34051]: src/shared/att.c:disconnect_cb() Channel 0x55b98cb3e0 disconnected: Software caused connection abort
+bluetoothd[34051]: src/device.c:att_disconnected_cb()
+bluetoothd[34051]: src/device.c:att_disconnected_cb() Software caused connection abort (103)
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_disconnected() Device disconnected. Cleaning up.
+bluetoothd[34051]: src/device.c:att_disconnected_cb() Automatic connection disabled
+bluetoothd[34051]: src/gatt-database.c:btd_gatt_database_att_disconnected()
+bluetoothd[34051]: src/gatt-database.c:att_disconnected()
+bluetoothd[34051]: attrib/gattrib.c:g_attrib_unref() 0x55b98ebe90: g_attrib_unref=0
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0014 complete: 0x00
+bluetoothd[34051]: src/adapter.c:dev_disconnected() Device 22:22:09:C3:08:3D disconnected, reason 2
+bluetoothd[34051]: src/adapter.c:adapter_remove_connection()
+bluetoothd[34051]: No matching connection for device
+bluetoothd[34051]: plugins/policy.c:disconnect_cb() reason 2
+bluetoothd[34051]: src/adapter.c:bonding_attempt_complete() hci0 bdaddr 22:22:09:C3:08:3D type 1 status 0xe
+bluetoothd[34051]: src/device.c:device_bonding_complete() bonding (nil) status 0x0e
+bluetoothd[34051]: src/device.c:device_bonding_failed() status 14
+bluetoothd[34051]: src/adapter.c:resume_discovery()
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] event 0x000b
+bluetoothd[34051]: src/adapter.c:connected_callback() hci0 device 22:22:09:C3:08:3D connected eir_len 0
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: src/gatt-database.c:proxy_removed_cb() Proxy removed - removing service: /me/wehrfritz/bluez_peripheral/service_battery/service0
+bluetoothd[34051]: src/gatt-database.c:gatt_db_service_removed() Local GATT service removed
+bluetoothd[34051]: src/gatt-database.c:client_disconnect_cb() Client disconnected
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.RemoveMatch
+bluetoothd[34051]: src/gatt-database.c:proxy_removed_cb() Proxy removed - removing service: /me/wehrfritz/bluez_peripheral/service_info/service0
+bluetoothd[34051]: src/gatt-database.c:gatt_db_service_removed() Local GATT service removed
+bluetoothd[34051]: src/gatt-database.c:client_disconnect_cb() Client disconnected
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.RemoveMatch
+bluetoothd[34051]: src/gatt-database.c:proxy_removed_cb() Proxy removed - removing service: /me/wehrfritz/bluez_peripheral/service_hid/service0
+bluetoothd[34051]: src/gatt-database.c:gatt_db_service_removed() Local GATT service removed
+bluetoothd[34051]: src/gatt-database.c:client_disconnect_cb() Client disconnected
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.RemoveMatch
+bluetoothd[34051]: src/agent.c:agent_disconnect() Agent :1.37 disconnected
+bluetoothd[34051]: src/agent.c:remove_default_agent() Default agent set to :1.36 /org/bluez/agent
+bluetoothd[34051]: src/agent.c:agent_destroy() agent :1.37
+bluetoothd[34051]: src/agent.c:agent_unref() 0x55b98ea2d0: ref=0
+bluetoothd[34051]: src/advertising.c:client_disconnect_cb() Client disconnected
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0018
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0018 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x003f
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x003f complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.RemoveMatch
+bluetoothd[34051]: src/gatt-database.c:connect_cb() New incoming LE ATT connection
+bluetoothd[34051]: src/device.c:device_attach_att() Elevating security level since LTK is available
+bluetoothd[34051]: attrib/gattrib.c:g_attrib_ref() 0x55b98e98c0: g_attrib_ref=1
+bluetoothd[34051]: src/device.c:device_accept_gatt_profiles() initiator false
+bluetoothd[34051]: profiles/gap/gas.c:gap_accept() GAP profile accept (22:22:09:C3:08:3D)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: disconnected -> connected (0)
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_connected() Device connected.
+bluetoothd[34051]: src/gatt-database.c:send_notification_to_device() GATT server sending indication
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/gatt-database.c:db_hash_read_cb() Database Hash read
+bluetoothd[34051]: [0x55b98ce9a0] src/shared/gatt-client.c:exchange_mtu_cb() MTU exchange complete, with MTU: 517
+bluetoothd[34051]: src/gatt-database.c:service_changed_conf()
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x10
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_grp_type_cb() Read By Grp Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: [0x55b98ce9a0] src/shared/gatt-client.c:db_hash_read_cb() DB Hash found: handle 0x0009 length 0x0010
+bluetoothd[34051]: [0x55b98ce9a0] src/shared/gatt-client.c:db_hash_read_cb() DB Hash match: skipping discovery
+bluetoothd[34051]: [0x55b98ce9a0] src/shared/gatt-client.c:write_client_features() Writing Client Features 0x05
+bluetoothd[34051]: [0x55b98ce9a0] src/shared/gatt-client.c:service_changed_register_cb() Registered handler for "Service Changed": 0
+bluetoothd[34051]: src/device.c:gatt_client_ready_cb() status: success, error: 0
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_ready() GATT client ready
+bluetoothd[34051]: src/gatt-client.c:create_services() Exporting objects for GATT services: 22:22:09:C3:08:3D
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_ready() Features 0x05
+bluetoothd[34051]: src/device.c:device_svc_resolved() /org/bluez/hci0/dev_22_22_09_C3_08_3D err 0
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x06
+bluetoothd[34051]: src/shared/gatt-server.c:find_by_type_val_cb() Find By Type Value - start: 0x0001 end: 0xffff uuid: 0x2800
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x10
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_grp_type_cb() Read By Grp Type - start: 0x0013 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x06
+bluetoothd[34051]: src/shared/gatt-server.c:find_by_type_val_cb() Find By Type Value - start: 0x0010 end: 0xffff uuid: 0x2800
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0x0005
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0x0005
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x000d end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0005 end: 0x0005
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0008 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0006 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x000e end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0006 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x12
+bluetoothd[34051]: src/shared/gatt-server.c:write_cb() Write Req - handle: 0x0009
+bluetoothd[34051]: src/gatt-database.c:gatt_ccc_write_cb() CCC write called for handle: 0x0009
+bluetoothd[34051]: src/shared/gatt-server.c:write_complete_cb() Write Complete: err 0
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x000d end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0009 end: 0x0009
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x000e end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0010 end: 0x0012
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0010 end: 0x0012
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0012 end: 0x0012
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/gatt-database.c:db_hash_read_cb() Database Hash read
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98ebe90) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0014
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] event 0x000c
+bluetoothd[34051]: src/adapter.c:dev_disconnected() Device 22:22:09:C3:08:3D disconnected, reason 2
+bluetoothd[34051]: src/adapter.c:adapter_remove_connection()
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [signal] org.bluez.Bearer.LE1.Disconnected
+bluetoothd[34051]: [signal] org.bluez.Device1.Disconnected
+bluetoothd[34051]: plugins/policy.c:disconnect_cb() reason 2
+bluetoothd[34051]: src/adapter.c:bonding_attempt_complete() hci0 bdaddr 22:22:09:C3:08:3D type 1 status 0xe
+bluetoothd[34051]: src/device.c:device_bonding_complete() bonding (nil) status 0x0e
+bluetoothd[34051]: src/device.c:device_bonding_failed() status 14
+bluetoothd[34051]: src/adapter.c:resume_discovery()
+bluetoothd[34051]: src/shared/att.c:disconnect_cb() Channel 0x55b98ebe90 disconnected: Software caused connection abort
+bluetoothd[34051]: src/device.c:att_disconnected_cb()
+bluetoothd[34051]: src/device.c:att_disconnected_cb() Software caused connection abort (103)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: connected -> disconnecting (0)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: disconnecting -> disconnected (0)
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_disconnected() Device disconnected. Cleaning up.
+bluetoothd[34051]: src/device.c:att_disconnected_cb() Automatic connection disabled
+bluetoothd[34051]: src/gatt-database.c:btd_gatt_database_att_disconnected()
+bluetoothd[34051]: src/gatt-database.c:att_disconnected()
+bluetoothd[34051]: attrib/gattrib.c:g_attrib_unref() 0x55b98e98c0: g_attrib_unref=0
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0014 complete: 0x00
+bluetoothd[34051]: src/adapter.c:dev_disconnected() Device 22:22:09:C3:08:3D disconnected, reason 2
+bluetoothd[34051]: src/adapter.c:adapter_remove_connection()
+bluetoothd[34051]: No matching connection for device
+bluetoothd[34051]: plugins/policy.c:disconnect_cb() reason 2
+bluetoothd[34051]: src/adapter.c:bonding_attempt_complete() hci0 bdaddr 22:22:09:C3:08:3D type 1 status 0xe
+bluetoothd[34051]: src/device.c:device_bonding_complete() bonding (nil) status 0x0e
+bluetoothd[34051]: src/device.c:device_bonding_failed() status 14
+bluetoothd[34051]: src/adapter.c:resume_discovery()
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#2]
+bluetoothd[34051]: [:1.38:method_return] < [#2]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#4]
+bluetoothd[34051]: [:1.38:method_return] < [#4]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#5]
+bluetoothd[34051]: [:1.38:method_return] < [#5]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#6]
+bluetoothd[34051]: [:1.38:method_return] < [#6]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#7]
+bluetoothd[34051]: [:1.38:method_return] < [#7]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#8]
+bluetoothd[34051]: [:1.38:method_return] < [#8]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#9]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#9]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#10]
+bluetoothd[34051]: [:1.38:method_return] < [#10]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#11]
+bluetoothd[34051]: [:1.38:method_return] < [#11]
+bluetoothd[34051]: [:1.38:method_call] > org.bluez.GattManager1.RegisterApplication [#15]
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.AddMatch
+bluetoothd[34051]: src/gatt-database.c:manager_register_app() Registering application: :1.38:/me/wehrfritz/bluez_peripheral/service_battery
+bluetoothd[34051]: [:1.38:method_call] < org.freedesktop.DBus.ObjectManager.GetManagedObjects
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_battery/service0, iface: org.bluez.GattService1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_battery/service0/char0, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:database_add_service() handle 0x002e UUID 0000180f-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:include_services() path /me/wehrfritz/bluez_peripheral/service_battery/service0
+bluetoothd[34051]: src/gatt-database.c:database_add_ccc() Created CCC entry for characteristic
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x0031 UUID 00002a19-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:gatt_db_service_added() GATT Service added to local database
+bluetoothd[34051]: src/gatt-database.c:db_hash_read_cb() Database Hash read
+bluetoothd[34051]: src/gatt-database.c:client_ready_cb() GATT application registered: :1.38:/me/wehrfritz/bluez_peripheral/service_battery
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_return] < [#15]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#17]
+bluetoothd[34051]: [:1.38:method_return] < [#17]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#18]
+bluetoothd[34051]: [:1.38:method_return] < [#18]
+bluetoothd[34051]: [:1.38:method_call] > org.bluez.GattManager1.RegisterApplication [#22]
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.AddMatch
+bluetoothd[34051]: src/gatt-database.c:manager_register_app() Registering application: :1.38:/me/wehrfritz/bluez_peripheral/service_info
+bluetoothd[34051]: [:1.38:method_call] < org.freedesktop.DBus.ObjectManager.GetManagedObjects
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_info/service0, iface: org.bluez.GattService1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_info/service0/char0, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:database_add_service() handle 0x0033 UUID 0000180a-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:include_services() path /me/wehrfritz/bluez_peripheral/service_info/service0
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x0036 UUID 00002a50-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:gatt_db_service_added() GATT Service added to local database
+bluetoothd[34051]: src/gatt-database.c:db_hash_read_cb() Database Hash read
+bluetoothd[34051]: src/gatt-database.c:client_ready_cb() GATT application registered: :1.38:/me/wehrfritz/bluez_peripheral/service_info
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_return] < [#22]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#24]
+bluetoothd[34051]: [:1.38:method_return] < [#24]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#25]
+bluetoothd[34051]: [:1.38:method_return] < [#25]
+bluetoothd[34051]: [:1.38:method_call] > org.bluez.GattManager1.RegisterApplication [#36]
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.AddMatch
+bluetoothd[34051]: src/gatt-database.c:manager_register_app() Registering application: :1.38:/me/wehrfritz/bluez_peripheral/service_hid
+bluetoothd[34051]: [:1.38:method_call] < org.freedesktop.DBus.ObjectManager.GetManagedObjects
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0, iface: org.bluez.GattService1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char0, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char1, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char2, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char3, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char3/desc0, iface: org.bluez.GattDescriptor1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char4, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char4/desc0, iface: org.bluez.GattDescriptor1
+bluetoothd[34051]: src/gatt-database.c:proxy_added_cb() Object received: /me/wehrfritz/bluez_peripheral/service_hid/service0/char5, iface: org.bluez.GattCharacteristic1
+bluetoothd[34051]: src/gatt-database.c:database_add_service() handle 0x0037 UUID 00001812-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:include_services() path /me/wehrfritz/bluez_peripheral/service_hid/service0
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x003a UUID 00002a4c-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x003c UUID 00002a4a-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x003e UUID 00002a4e-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_ccc() Created CCC entry for characteristic
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x0040 UUID 00002a4d-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_desc() handle 0x0042 UUID 00002908-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_ccc() Created CCC entry for characteristic
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x0044 UUID 00002a4d-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_desc() handle 0x0046 UUID 00002908-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:database_add_chrc() handle 0x0048 UUID 00002a4b-0000-1000-8000-00805f9b34fb
+bluetoothd[34051]: src/gatt-database.c:gatt_db_service_added() GATT Service added to local database
+bluetoothd[34051]: src/gatt-database.c:db_hash_read_cb() Database Hash read
+bluetoothd[34051]: src/gatt-database.c:client_ready_cb() GATT application registered: :1.38:/me/wehrfritz/bluez_peripheral/service_hid
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_return] < [#36]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#39]
+bluetoothd[34051]: [:1.38:method_return] < [#39]
+bluetoothd[34051]: [:1.38:method_call] > org.bluez.AgentManager1.RegisterAgent [#40]
+bluetoothd[34051]: src/agent.c:agent_ref() 0x55b98ded80: ref=1
+bluetoothd[34051]: src/agent.c:register_agent() agent :1.38
+bluetoothd[34051]: [:1.38:method_return] < [#40]
+bluetoothd[34051]: [:1.38:method_call] > org.bluez.AgentManager1.RequestDefaultAgent [#41]
+bluetoothd[34051]: src/agent.c:add_default_agent() Default agent set to :1.38 /me/wehrfritz/bluez_peripheral/agent
+bluetoothd[34051]: [:1.38:method_return] < [#41]
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0018
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0018 complete: 0x00
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#42]
+bluetoothd[34051]: [:1.38:method_return] < [#42]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#43]
+bluetoothd[34051]: [:1.38:method_return] < [#43]
+bluetoothd[34051]: [:1.38:method_call] > org.bluez.LEAdvertisingManager1.RegisterAdvertisement [#45]
+bluetoothd[34051]: src/advertising.c:register_advertisement() RegisterAdvertisement
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.AddMatch
+bluetoothd[34051]: src/advertising.c:client_create() Adding proxy for /com/spacecheese/bluez_peripheral/advert0
+bluetoothd[34051]: [org.freedesktop.DBus:method_call] < org.freedesktop.DBus.StartServiceByName
+bluetoothd[34051]: src/advertising.c:register_advertisement() Registered advertisement at path /com/spacecheese/bluez_peripheral/advert0
+bluetoothd[34051]: [:1.38:method_call] < org.freedesktop.DBus.ObjectManager.GetManagedObjects
+bluetoothd[34051]: [:1.38:method_call] < org.freedesktop.DBus.Properties.GetAll
+bluetoothd[34051]: src/advertising.c:parse_service_uuids() Adding ServiceUUID: 180f
+bluetoothd[34051]: src/advertising.c:parse_service_uuids() Adding ServiceUUID: 180a
+bluetoothd[34051]: src/advertising.c:parse_service_uuids() Adding ServiceUUID: 1812
+bluetoothd[34051]: src/advertising.c:parse_discoverable() Adding Flags 0x02
+bluetoothd[34051]: src/advertising.c:refresh_extended_adv() Refreshing advertisement parameters: /com/spacecheese/bluez_peripheral/advert0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0054
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0054 complete: 0x00
+bluetoothd[34051]: src/advertising.c:add_adv_params_callback() Refreshing advertisement data: /com/spacecheese/bluez_peripheral/advert0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0055
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0055 complete: 0x00
+bluetoothd[34051]: src/advertising.c:add_adv_callback() Advertisement registered: /com/spacecheese/bluez_peripheral/advert0
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_return] < [#45]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#48]
+bluetoothd[34051]: [:1.38:method_return] < [#48]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#49]
+bluetoothd[34051]: [:1.38:method_return] < [#49]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#50]
+bluetoothd[34051]: [:1.38:method_return] < [#50]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#51]
+bluetoothd[34051]: [:1.38:method_return] < [#51]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#52]
+bluetoothd[34051]: [:1.38:method_return] < [#52]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#53]
+bluetoothd[34051]: [:1.38:method_return] < [#53]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#54]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#54]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#55]
+bluetoothd[34051]: [:1.38:method_return] < [#55]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#56]
+bluetoothd[34051]: [:1.38:method_return] < [#56]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#57]
+bluetoothd[34051]: [:1.38:method_return] < [#57]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#58]
+bluetoothd[34051]: [:1.38:method_return] < [#58]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#59]
+bluetoothd[34051]: [:1.38:method_return] < [#59]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#60]
+bluetoothd[34051]: [:1.38:method_return] < [#60]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#61]
+bluetoothd[34051]: [:1.38:method_return] < [#61]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#62]
+bluetoothd[34051]: [:1.38:method_return] < [#62]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#63]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#63]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#64]
+bluetoothd[34051]: [:1.38:method_return] < [#64]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#65]
+bluetoothd[34051]: [:1.38:method_return] < [#65]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#66]
+bluetoothd[34051]: [:1.38:method_return] < [#66]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#67]
+bluetoothd[34051]: [:1.38:method_return] < [#67]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#68]
+bluetoothd[34051]: [:1.38:method_return] < [#68]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#69]
+bluetoothd[34051]: [:1.38:method_return] < [#69]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#70]
+bluetoothd[34051]: [:1.38:method_return] < [#70]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#71]
+bluetoothd[34051]: [:1.38:method_return] < [#71]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#72]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#72]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#73]
+bluetoothd[34051]: [:1.38:method_return] < [#73]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#74]
+bluetoothd[34051]: [:1.38:method_return] < [#74]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#75]
+bluetoothd[34051]: [:1.38:method_return] < [#75]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#76]
+bluetoothd[34051]: [:1.38:method_return] < [#76]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#77]
+bluetoothd[34051]: [:1.38:method_return] < [#77]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#78]
+bluetoothd[34051]: [:1.38:method_return] < [#78]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#79]
+bluetoothd[34051]: [:1.38:method_return] < [#79]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#80]
+bluetoothd[34051]: [:1.38:method_return] < [#80]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#81]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#81]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#82]
+bluetoothd[34051]: [:1.38:method_return] < [#82]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#83]
+bluetoothd[34051]: [:1.38:method_return] < [#83]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#84]
+bluetoothd[34051]: [:1.38:method_return] < [#84]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#85]
+bluetoothd[34051]: [:1.38:method_return] < [#85]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#86]
+bluetoothd[34051]: [:1.38:method_return] < [#86]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#87]
+bluetoothd[34051]: [:1.38:method_return] < [#87]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] event 0x000b
+bluetoothd[34051]: src/adapter.c:connected_callback() hci0 device 22:22:09:C3:08:3D connected eir_len 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#88]
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_return] < [#88]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#89]
+bluetoothd[34051]: [:1.38:method_return] < [#89]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#90]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#90]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#91]
+bluetoothd[34051]: [:1.38:method_return] < [#91]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#92]
+bluetoothd[34051]: [:1.38:method_return] < [#92]
+bluetoothd[34051]: src/gatt-database.c:connect_cb() New incoming LE ATT connection
+bluetoothd[34051]: src/device.c:device_attach_att() Elevating security level since LTK is available
+bluetoothd[34051]: attrib/gattrib.c:g_attrib_ref() 0x55b98df180: g_attrib_ref=1
+bluetoothd[34051]: src/device.c:device_accept_gatt_profiles() initiator false
+bluetoothd[34051]: profiles/gap/gas.c:gap_accept() GAP profile accept (22:22:09:C3:08:3D)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: disconnected -> connected (0)
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_connected() Device connected.
+bluetoothd[34051]: src/gatt-database.c:send_notification_to_device() GATT server sending indication
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/gatt-database.c:db_hash_read_cb() Database Hash read
+bluetoothd[34051]: [0x55b98d3ed0] src/shared/gatt-client.c:exchange_mtu_cb() MTU exchange complete, with MTU: 517
+bluetoothd[34051]: src/gatt-database.c:service_changed_conf()
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: [:1.38:method_call] < org.bluez.GattCharacteristic1.ReadValue
+bluetoothd[34051]: [0x55b98d3ed0] src/shared/gatt-client.c:db_hash_read_cb() DB Hash found: handle 0x0009 length 0x0010
+bluetoothd[34051]: [0x55b98d3ed0] src/shared/gatt-client.c:db_hash_read_cb() DB Hash match: skipping discovery
+bluetoothd[34051]: [0x55b98d3ed0] src/shared/gatt-client.c:write_client_features() Writing Client Features 0x05
+bluetoothd[34051]: [0x55b98d3ed0] src/shared/gatt-client.c:service_changed_register_cb() Registered handler for "Service Changed": 0
+bluetoothd[34051]: src/device.c:gatt_client_ready_cb() status: success, error: 0
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_ready() GATT client ready
+bluetoothd[34051]: src/gatt-client.c:create_services() Exporting objects for GATT services: 22:22:09:C3:08:3D
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_ready() Features 0x05
+bluetoothd[34051]: src/device.c:device_svc_resolved() /org/bluez/hci0/dev_22_22_09_C3_08_3D err 0
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x10
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_grp_type_cb() Read By Grp Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x06
+bluetoothd[34051]: src/shared/gatt-server.c:find_by_type_val_cb() Find By Type Value - start: 0x0001 end: 0xffff uuid: 0x2800
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x10
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_grp_type_cb() Read By Grp Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x10
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_grp_type_cb() Read By Grp Type - start: 0x0049 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x06
+bluetoothd[34051]: src/shared/gatt-server.c:find_by_type_val_cb() Find By Type Value - start: 0x0010 end: 0xffff uuid: 0x2800
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x10
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_grp_type_cb() Read By Grp Type - start: 0x0049 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0x0005
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x000d end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0x0005
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0008 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0005 end: 0x0005
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x000e end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0006 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x12
+bluetoothd[34051]: src/shared/gatt-server.c:write_cb() Write Req - handle: 0x0009
+bluetoothd[34051]: src/gatt-database.c:gatt_ccc_write_cb() CCC write called for handle: 0x0009
+bluetoothd[34051]: src/shared/gatt-server.c:write_complete_cb() Write Complete: err 0
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0006 end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0001 end: 0xffff
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x000d end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0009 end: 0x0009
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x000e end: 0x000f
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0010 end: 0x0012
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0010 end: 0x0012
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0012 end: 0x0012
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x002e end: 0x0032
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0030 end: 0x0032
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x002e end: 0x0032
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0031 end: 0x0032
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0032 end: 0x0032
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0033 end: 0x0036
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0035 end: 0x0036
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0033 end: 0x0036
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0036 end: 0x0036
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0037 end: 0x0048
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0039 end: 0x0048
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0037 end: 0x0048
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x08
+bluetoothd[34051]: src/shared/gatt-server.c:read_by_type_cb() Read By Type - start: 0x0048 end: 0x0048
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0041 end: 0x0042
+bluetoothd[34051]: src/shared/att.c:can_read_data() (chan 0x55b98c7950) ATT PDU received: 0x04
+bluetoothd[34051]: src/shared/gatt-server.c:find_info_cb() Find Info - start: 0x0045 end: 0x0046
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#94]
+bluetoothd[34051]: [:1.38:method_return] < [#94]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#95]
+bluetoothd[34051]: [:1.38:method_return] < [#95]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#96]
+bluetoothd[34051]: [:1.38:method_return] < [#96]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#97]
+bluetoothd[34051]: [:1.38:method_return] < [#97]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#98]
+bluetoothd[34051]: [:1.38:method_return] < [#98]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#99]
+bluetoothd[34051]: [:1.38:method_return] < [#99]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#100]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#100]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#101]
+bluetoothd[34051]: [:1.38:method_return] < [#101]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#102]
+bluetoothd[34051]: [:1.38:method_return] < [#102]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] event 0x000c
+bluetoothd[34051]: src/adapter.c:dev_disconnected() Device 22:22:09:C3:08:3D disconnected, reason 3
+bluetoothd[34051]: src/adapter.c:adapter_remove_connection()
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [signal] org.bluez.Bearer.LE1.Disconnected
+bluetoothd[34051]: [signal] org.bluez.Device1.Disconnected
+bluetoothd[34051]: plugins/policy.c:disconnect_cb() reason 3
+bluetoothd[34051]: src/adapter.c:bonding_attempt_complete() hci0 bdaddr 22:22:09:C3:08:3D type 1 status 0xe
+bluetoothd[34051]: src/device.c:device_bonding_complete() bonding (nil) status 0x0e
+bluetoothd[34051]: src/device.c:device_bonding_failed() status 14
+bluetoothd[34051]: src/adapter.c:resume_discovery()
+bluetoothd[34051]: src/shared/att.c:disconnect_cb() Channel 0x55b98c7950 disconnected: Connection reset by peer
+bluetoothd[34051]: src/device.c:att_disconnected_cb()
+bluetoothd[34051]: src/device.c:att_disconnected_cb() Connection reset by peer (104)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: connected -> disconnecting (0)
+bluetoothd[34051]: src/service.c:change_state() 0x55b98daa70: device 22:22:09:C3:08:3D profile gap-profile state changed: disconnecting -> disconnected (0)
+bluetoothd[34051]: src/gatt-client.c:btd_gatt_client_disconnected() Device disconnected. Cleaning up.
+bluetoothd[34051]: src/device.c:att_disconnected_cb() Automatic connection disabled
+bluetoothd[34051]: src/gatt-database.c:btd_gatt_database_att_disconnected()
+bluetoothd[34051]: src/gatt-database.c:att_disconnected()
+bluetoothd[34051]: attrib/gattrib.c:g_attrib_unref() 0x55b98df180: g_attrib_unref=0
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#103]
+bluetoothd[34051]: [:1.38:method_return] < [#103]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#104]
+bluetoothd[34051]: [:1.38:method_return] < [#104]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#105]
+bluetoothd[34051]: [:1.38:method_return] < [#105]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#106]
+bluetoothd[34051]: [:1.38:method_return] < [#106]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#107]
+bluetoothd[34051]: [:1.38:method_return] < [#107]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#108]
+bluetoothd[34051]: [:1.38:method_return] < [#108]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#109]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#109]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#110]
+bluetoothd[34051]: [:1.38:method_return] < [#110]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#111]
+bluetoothd[34051]: [:1.38:method_return] < [#111]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#112]
+bluetoothd[34051]: [:1.38:method_return] < [#112]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#113]
+bluetoothd[34051]: [:1.38:method_return] < [#113]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#114]
+bluetoothd[34051]: [:1.38:method_return] < [#114]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#115]
+bluetoothd[34051]: [:1.38:method_return] < [#115]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#116]
+bluetoothd[34051]: [:1.38:method_return] < [#116]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#117]
+bluetoothd[34051]: [:1.38:method_return] < [#117]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#118]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#118]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#119]
+bluetoothd[34051]: [:1.38:method_return] < [#119]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#120]
+bluetoothd[34051]: [:1.38:method_return] < [#120]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#121]
+bluetoothd[34051]: [:1.38:method_return] < [#121]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#122]
+bluetoothd[34051]: [:1.38:method_return] < [#122]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#123]
+bluetoothd[34051]: [:1.38:method_return] < [#123]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#124]
+bluetoothd[34051]: [:1.38:method_return] < [#124]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#125]
+bluetoothd[34051]: [:1.38:method_return] < [#125]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#126]
+bluetoothd[34051]: [:1.38:method_return] < [#126]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#127]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#127]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#128]
+bluetoothd[34051]: [:1.38:method_return] < [#128]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#129]
+bluetoothd[34051]: [:1.38:method_return] < [#129]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#130]
+bluetoothd[34051]: [:1.38:method_return] < [#130]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#131]
+bluetoothd[34051]: [:1.38:method_return] < [#131]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#132]
+bluetoothd[34051]: [:1.38:method_return] < [#132]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#133]
+bluetoothd[34051]: [:1.38:method_return] < [#133]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#134]
+bluetoothd[34051]: [:1.38:method_return] < [#134]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#135]
+bluetoothd[34051]: [:1.38:method_return] < [#135]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#136]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#136]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#137]
+bluetoothd[34051]: [:1.38:method_return] < [#137]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#138]
+bluetoothd[34051]: [:1.38:method_return] < [#138]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#139]
+bluetoothd[34051]: [:1.38:method_return] < [#139]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#140]
+bluetoothd[34051]: [:1.38:method_return] < [#140]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#141]
+bluetoothd[34051]: [:1.38:method_return] < [#141]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#142]
+bluetoothd[34051]: [:1.38:method_return] < [#142]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#143]
+bluetoothd[34051]: [:1.38:method_return] < [#143]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#144]
+bluetoothd[34051]: [:1.38:method_return] < [#144]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#145]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#145]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#146]
+bluetoothd[34051]: [:1.38:method_return] < [#146]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#147]
+bluetoothd[34051]: [:1.38:method_return] < [#147]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#148]
+bluetoothd[34051]: [:1.38:method_return] < [#148]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#149]
+bluetoothd[34051]: [:1.38:method_return] < [#149]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#150]
+bluetoothd[34051]: [:1.38:method_return] < [#150]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#151]
+bluetoothd[34051]: [:1.38:method_return] < [#151]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#152]
+bluetoothd[34051]: [:1.38:method_return] < [#152]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#153]
+bluetoothd[34051]: [:1.38:method_return] < [#153]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#154]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#154]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#155]
+bluetoothd[34051]: [:1.38:method_return] < [#155]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#156]
+bluetoothd[34051]: [:1.38:method_return] < [#156]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#157]
+bluetoothd[34051]: [:1.38:method_return] < [#157]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#158]
+bluetoothd[34051]: [:1.38:method_return] < [#158]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#159]
+bluetoothd[34051]: [:1.38:method_return] < [#159]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#160]
+bluetoothd[34051]: [:1.38:method_return] < [#160]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#161]
+bluetoothd[34051]: [:1.38:method_return] < [#161]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#162]
+bluetoothd[34051]: [:1.38:method_return] < [#162]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#163]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#163]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#164]
+bluetoothd[34051]: [:1.38:method_return] < [#164]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#165]
+bluetoothd[34051]: [:1.38:method_return] < [#165]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#166]
+bluetoothd[34051]: [:1.38:method_return] < [#166]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#167]
+bluetoothd[34051]: [:1.38:method_return] < [#167]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#168]
+bluetoothd[34051]: [:1.38:method_return] < [#168]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#169]
+bluetoothd[34051]: [:1.38:method_return] < [#169]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#170]
+bluetoothd[34051]: [:1.38:method_return] < [#170]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#171]
+bluetoothd[34051]: [:1.38:method_return] < [#171]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#172]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#172]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#173]
+bluetoothd[34051]: [:1.38:method_return] < [#173]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#174]
+bluetoothd[34051]: [:1.38:method_return] < [#174]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#175]
+bluetoothd[34051]: [:1.38:method_return] < [#175]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#176]
+bluetoothd[34051]: [:1.38:method_return] < [#176]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#177]
+bluetoothd[34051]: [:1.38:method_return] < [#177]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#178]
+bluetoothd[34051]: [:1.38:method_return] < [#178]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#179]
+bluetoothd[34051]: [:1.38:method_return] < [#179]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#180]
+bluetoothd[34051]: [:1.38:method_return] < [#180]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#181]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#181]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#182]
+bluetoothd[34051]: [:1.38:method_return] < [#182]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#183]
+bluetoothd[34051]: [:1.38:method_return] < [#183]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#184]
+bluetoothd[34051]: [:1.38:method_return] < [#184]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#185]
+bluetoothd[34051]: [:1.38:method_return] < [#185]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#186]
+bluetoothd[34051]: [:1.38:method_return] < [#186]
+bluetoothd[34051]: src/adapter.c:set_discoverable() sending set mode command for index 0
+bluetoothd[34051]: src/adapter.c:set_mode() sending set mode command for index 0
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0007
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#187]
+bluetoothd[34051]: [:1.38:method_return] < [#187]
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0007 complete: 0x00
+bluetoothd[34051]: src/shared/mgmt.c:send_request() [0x0000] command 0x0006
+bluetoothd[34051]: src/shared/mgmt.c:can_read_data() [0x0000] command 0x0006 complete: 0x00
+bluetoothd[34051]: [signal] org.freedesktop.DBus.Properties.PropertiesChanged
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#188]
+bluetoothd[34051]: [:1.38:method_return] < [#188]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#189]
+bluetoothd[34051]: [:1.38:method_return] < [#189]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Properties.Set [#190]
+bluetoothd[34051]: [:1.38:error] < org.freedesktop.DBus.Error.UnknownProperty [#190]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#191]
+bluetoothd[34051]: [:1.38:method_return] < [#191]
+bluetoothd[34051]: [:1.38:method_call] > org.freedesktop.DBus.ObjectManager.GetManagedObjects [#192]
+bluetoothd[34051]: [:1.38:method_return] < [#192]
