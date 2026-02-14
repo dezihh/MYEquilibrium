@@ -1,4 +1,5 @@
-Beschreibung: Bluetooth läuft seit initialem connect - main.py mit ctrl-c abgebrochen - verbindung in passiv gefallen main.py rneut gestartet, verbindung wieder reinitiiert und ok
+Beschreibung: Bluetooth läuft seit initialem connect - main.py mit ctrl-c abgebrochen - verbindung in passiv gefallen main.py rneut gestartet, verbindung wieder reinitiiert und ok. nach nochmaligem ctrl-c bleibt verbindung aktiv bestehen.
+Nach ca 3 minuten bluetoothd mit ctrl-c beendet - verbindung wird passiv
 
 bluetoothd[1918]: [:1.27:method_call] > org.freedesktop.DBus.Introspectable.Introspect [#2]
 bluetoothd[1918]: [:1.27:method_return] < [#2]
