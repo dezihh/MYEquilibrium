@@ -1,0 +1,2 @@
+Beschreibung: Verbrindung nach erfolgreicher reinitialisierung wieder mit ctrl-c beendet und diesmal mit isolierter blekeyboard (ohne main.py) aufgebaut
+
