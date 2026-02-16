@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 from asyncio import CancelledError
-from typing import Dict
+from typing import Dict, TYPE_CHECKING, Any
 
 import httpx
 from fastapi import HTTPException
@@ -25,10 +25,53 @@ from Api.models.Status import StatusReport
 from Api.models.WebsocketResponses import BleDevice, WebsocketIrResponse
 from BleKeyboard.BleKeyboard import BleKeyboard
 from DbManager.DbManager import engine
-from IrManager.IrManager import IrManager
 from RemoteController.AsyncQueueManager import AsyncQueueManager
-from RfManager.RfManager import RfManager
 from HaManager.HaManager import HaManager
+
+if TYPE_CHECKING:
+    from IrManager.IrManager import IrManager
+    from RfManager.RfManager import RfManager
+
+
+class _DevIrManager:
+    logger = logging.getLogger(__package__)
+
+    def cancel_recording(self):
+        return None
+
+    async def record_command(self, _name, _websocket=None):
+        self.logger.warning("IR is disabled in dev mode")
+        return None
+
+    async def send_and_repeat(self, _code):
+        self.logger.warning("IR is disabled in dev mode")
+
+    async def send_command(self, _code):
+        self.logger.warning("IR is disabled in dev mode")
+
+    def stop_repeating(self):
+        return None
+
+
+class _DevRfManager:
+    logger = logging.getLogger(__package__)
+
+    def start_listener(self, addresses: list[bytes], debug: bool = False):
+        if addresses:
+            self.logger.warning("RF listener is disabled in dev mode")
+        return None
+
+    def stop_listener(self):
+        return None
+
+    def set_callback(self, _callback):
+        return None
+
+    def set_repeat_callback(self, _repeat_callback):
+        return None
+
+    def set_release_callback(self, _release_callback):
+        return None
 
 class RemoteController:
 
@@ -40,8 +83,8 @@ class RemoteController:
     logger: logging
     is_dev: Boolean
     ble_keyboard: BleKeyboard
-    rf_manager: RfManager
-    ir_manager: IrManager
+    rf_manager: Any
+    ir_manager: Any
     ha_manager: HaManager|None = None
     queue: AsyncQueueManager
 
@@ -56,6 +99,9 @@ class RemoteController:
         self.logger = logging.getLogger(__package__)
 
         self.is_dev = False
+
+        from IrManager.IrManager import IrManager
+        from RfManager.RfManager import RfManager
 
         self.ble_keyboard = await BleKeyboard.create()
 
@@ -85,6 +131,12 @@ class RemoteController:
         self.logger = logging.getLogger(__package__)
 
         self.is_dev = True
+
+        self.ble_keyboard = await BleKeyboard.create()
+        self.rf_manager = _DevRfManager()
+        self.ir_manager = _DevIrManager()
+
+        self.logger.info("Dev mode: IR and RF hardware are disabled")
 
         self.queue = AsyncQueueManager()
 
