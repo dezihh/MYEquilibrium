@@ -1,3 +1,9 @@
+########
+##
+# Start BLEKeyboard stand alone
+#
+##
+#####
 import asyncio
 from BleKeyboard.BleKeyboard import BleKeyboard
 
