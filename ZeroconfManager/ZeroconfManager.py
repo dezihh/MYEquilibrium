@@ -17,13 +17,17 @@ class ZeroconfManager:
         ip_addr = socket.gethostbyname(fqdn)
         hostname = fqdn.split('.')[0]
 
+        service_type = "_myequilibrium._tcp.local."
+        service_name = f"{name}.{service_type}"
+        server_name = f"{hostname}.local."
+
         self.info = AsyncServiceInfo(
-            "_equilibrium._tcp.local.",
-            name + "._equilibrium._tcp.local.",
+            service_type,
+            service_name,
             addresses=[socket.inet_aton(ip_addr)],
             port=8000,
             properties=description,
-            server=hostname,
+            server=server_name,
         )
 
         # Restrict to IPv4 to avoid failures on hosts without IPv6 routing

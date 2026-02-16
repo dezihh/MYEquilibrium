@@ -3,7 +3,6 @@ import json
 import logging
 from asyncio import CancelledError
 from typing import Dict
-from pathlib import Path
 
 import httpx
 from fastapi import HTTPException
@@ -32,8 +31,6 @@ from RfManager.RfManager import RfManager
 from HaManager.HaManager import HaManager
 
 class RemoteController:
-
-    CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
 
     status: StatusReport = StatusReport()
 
@@ -451,25 +448,12 @@ class RemoteController:
 
 
     def load_key_map(self, keymap_name: str = "default"):
-        config_dir = self.CONFIG_DIR
 
-        keymap_scene_path = config_dir / "keymap_scenes.json"
-        if keymap_scene_path.exists():
-            with keymap_scene_path.open("r") as file:
-                keymap_scene_data = file.read()
-                self.keymap_scene = json.loads(keymap_scene_data)
-        else:
-            self.logger.debug(f"Keymap scene file not found at {keymap_scene_path}, no scene keymap will be active.")
-            self.keymap_scene = {}
+        with open("config/keymap_scenes.json", "r") as file:
+            keymap_scene_data = file.read()
+            self.keymap_scene = json.loads(keymap_scene_data)
 
-        keymap_path = config_dir / f"keymap_{keymap_name}.json"
-        if not keymap_path.exists():
-            self.logger.warning(f"Keymap file not found at {keymap_path}, no keymap will be active.")
-            self.keymap = {}
-            self.cached_commands = {}
-            return
-
-        with keymap_path.open("r") as file:
+        with open(f"config/keymap_{keymap_name}.json") as file:
             keymap_data = file.read()
             self.keymap = json.loads(keymap_data)
 
@@ -488,14 +472,13 @@ class RemoteController:
 
     def suggest_keymap(self, scene: Scene):
         try:
-            remote_keymap_path = self.CONFIG_DIR / "remote_keymap.json"
-            with remote_keymap_path.open("r") as file:
+            with open("config/remote_keymap.json", "r") as file:
                 keymap_data = file.read()
 
             keymap_json = json.loads(keymap_data)
 
         except FileNotFoundError:
-            self.logger.warning(f"\"{remote_keymap_path}\" could not be opened. Can't generate suggested keymap.")
+            self.logger.warning("\"config/remote_keymap.json\" could not be opened. Can't generate suggested keymap.")
             return {}
 
         available_buttons = {}
@@ -638,29 +621,8 @@ class RemoteController:
 
         return ble_devices
 
-    async def ble_connect(self, address: str) -> bool:
-        """
-        Connect to a BLE device (typically Android TV).
-        
-        :param address: MAC address of the device
-        :return: True if successfully connected, False otherwise
-        """
-        result = await self.ble_keyboard.connect(address)
-        if not result:
-            self.logger.error(f"Failed to connect to BLE device {address}")
-        return result
+    async def ble_connect(self, address: str):
+        await self.ble_keyboard.connect(address)
 
     async def ble_disconnect(self):
         await self.ble_keyboard.disconnect()
-
-    async def ble_remove(self, address: str) -> bool:
-        """
-        Remove (forget) a BLE device.
-
-        :param address: MAC address of the device
-        :return: True if removed, False otherwise
-        """
-        result = await self.ble_keyboard.remove_device(address)
-        if not result:
-            self.logger.error(f"Failed to remove BLE device {address}")
-        return result

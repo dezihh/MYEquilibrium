@@ -4,7 +4,7 @@ from starlette.responses import RedirectResponse
 
 from Api.lifespan import lifespan, lifespan_dev
 from Api.models.ServerInfo import ServerInfo
-from Api.routers import commands, commands_extended, devices, images, scenes, websockets, macros, bluetooth, system
+from Api.routers import commands, devices, images, scenes, websockets, macros, bluetooth, system
 
 
 def app_generator(dev: bool = False):
@@ -15,7 +15,6 @@ def app_generator(dev: bool = False):
 
     app.mount("/ui", StaticFiles(directory="web", html=True), name="ui")
     app.include_router(commands.router)
-    app.include_router(commands_extended.router)
     app.include_router(devices.router)
     app.include_router(bluetooth.router)
     app.include_router(images.router)

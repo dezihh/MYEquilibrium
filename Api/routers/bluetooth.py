@@ -38,9 +38,3 @@ async def disconnect_ble_devices(request: Request):
     controller: RemoteController = request.state.controller
     await controller.ble_disconnect()
     return {"success": True}
-
-@router.delete("/remove/{mac_address}", tags=["Bluetooth Devices"])
-async def remove_ble_device(mac_address: str, request: Request):
-    controller: RemoteController = request.state.controller
-    success = await controller.ble_remove(mac_address)
-    return {"success": success}
