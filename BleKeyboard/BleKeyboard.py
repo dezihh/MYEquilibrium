@@ -87,19 +87,6 @@ class BleKeyboard:
 
                 devices = await self.devices
                 any_connected = any(d.get("connected") for d in devices)
-
-                # Auto-trust paired devices for persistent reconnects
-                for device in devices:
-                    if device.get("paired") and not device.get("trusted"):
-                        path = device.get("path")
-                        if not path:
-                            continue
-                        try:
-                            device_interface = await self._get_device_interface(path)
-                            await device_interface.set_trusted(True)
-                            self.logger.info(f"Device trusted: {device.get('address')}")
-                        except Exception:
-                            self.logger.debug("Failed to set trusted", exc_info=True)
                 if not any_connected and self.active_advertisement is None:
                     await self.advertise()
             except asyncio.CancelledError:
@@ -175,18 +162,6 @@ class BleKeyboard:
         self.active_advertisement = advert
         self.logger.info("Started advertising!")
 
-    async def stop_advertising(self):
-        """
-        Stop BLE advertising. Must be called before attempting to connect as central.
-        """
-        if self.active_advertisement is not None:
-            try:
-                await self.active_advertisement.unregister()
-                self.logger.info("Stopped advertising")
-            except Exception as e:
-                self.logger.warning(f"Failed to stop advertising: {e}")
-            finally:
-                self.active_advertisement = None
 
     def press_key(self, key_str: str):
         """
@@ -283,7 +258,6 @@ class BleKeyboard:
             address = device.get("Address")
             paired = device.get("Paired", False)
             connected = device.get("Connected", False)
-            trusted = device.get("Trusted", False)
 
             if address and paired and connected:
                 if not paired.value and connected.value:
@@ -311,37 +285,23 @@ class BleKeyboard:
             address = device.get("Address")
             paired = device.get("Paired", False)
             connected = device.get("Connected", False)
-            trusted = device.get("Trusted", False)
-
-            # Extract actual values from Variant objects
-            paired_value = paired.value if hasattr(paired, 'value') else paired
-            connected_value = connected.value if hasattr(connected, 'value') else connected
-            trusted_value = trusted.value if hasattr(trusted, 'value') else trusted
-            address_value = address.value if hasattr(address, 'value') else address
-            alias_value = alias.value if hasattr(alias, 'value') else alias
 
             # My ATV 4K doesn't pair automatically after connecting...
-            if address_value and paired_value is False and connected_value:
-                self.logger.info(f"Trying to pair with {address_value}")
-                device_interface = await self._get_device_interface(path)
-                self.logger.info("Trying to pair, confirm pairing on your device...")
-                try:
-                    await device_interface.call_pair()
-                except Exception as e:
-                    self.logger.warning(f"Failed to auto-pair: {e}")
+            if address and paired and connected:
+                if not paired.value and connected.value:
+                    self.logger.info(f"Trying to pair with {address.value}")
+                    interface = await self._get_device_interface(path)
+                    self.logger.info("Trying to pair, confirm pairing on your device...")
+                    await interface.call_pair()
 
-            # Include ALL devices (paired OR connected, not just both)
-            if address_value and alias_value and (paired_value or connected_value):
+            if address and alias and (paired or connected):
                 connected_devices.append({
                     "path": path,
-                    "address": address_value,
-                    "alias": alias_value,
-                    "paired": paired_value,
-                    "connected": connected_value,
-                    "trusted": trusted_value
+                    "address": None if not address else address.value,
+                    "alias": None if not alias else alias.value,
+                    "paired": None if not paired else paired.value,
+                    "connected": None if not connected else connected.value
                 })
-        
-        self.logger.debug(f"Found {len(connected_devices)} BLE devices: {[d['alias'] for d in connected_devices]}")
         return connected_devices
 
 
@@ -359,81 +319,25 @@ class BleKeyboard:
         return False
 
 
-    async def connect(self, address: str, timeout: int = 30) -> bool:
+    async def connect(self, address: str):
         """
-        Prepare for reconnect from a paired Central device (typically Android TV).
-        As a BLE Peripheral, we cannot initiate the connection. We refresh advertising
-        so the Central can reconnect automatically.
-
-        :param address: The MAC address of the device that should connect to us
-        :param timeout: Time to wait for the connection (seconds)
-        :return: True if connected successfully, False otherwise
+        Attempt to connect to the device with the given MAC address
+        :param address: The address of the device that should be connected
         """
-        self.logger.info(f"Preparing for reconnect from device {address}...")
+        await self.disconnect()
 
-        try:
-            devices = await self.devices
-            target_device = None
-            
-            for device in devices:
-                if device.get("address") == address:
-                    target_device = device
-                    break
-            
-            if not target_device:
-                self.logger.error(f"Device {address} not found in paired devices. Available: {[d['address'] for d in devices]}")
-                return False
+        devices = await self.devices
+        for device in devices:
+            if device.get("address") == address:
+                path = device.get("path")
+                if not path:
+                    self.logger.error("No path found for connected device")
+                    return
 
-            path = target_device.get("path")
-            if not path:
-                self.logger.error(f"No D-Bus path found for device {address}")
-                return False
-
-            # If already connected, we're done
-            if target_device.get("connected"):
-                self.logger.info(f"Already connected to {address}")
-                return True
-
-            # Ensure adapter is powered, discoverable, and pairable
-            await self._ensure_adapter_state()
-
-            # Get device interface
-            device_interface = await self._get_device_interface(path)
-
-            # Ensure device is trusted for persistent connection
-            try:
-                await device_interface.set_trusted(True)
-                self.logger.debug(f"Device {address} is trusted")
-            except Exception as e:
-                self.logger.warning(f"Failed to set trusted: {e}")
-
-            # Refresh advertising to trigger reconnect on the Central side
-            self.logger.info("Refreshing advertising to trigger reconnect...")
-            await self.stop_advertising()
-            await asyncio.sleep(0.5)
-            await self.advertise()
-
-            # Wait for connection to establish
-            self.logger.info(f"Waiting for {address} to connect (up to {timeout}s)...")
-            for i in range(timeout):
-                await asyncio.sleep(1)
-                if i % 10 == 0 and i > 0:
-                    await self._ensure_adapter_state()
-                devices = await self.devices
-                for device in devices:
-                    if device.get("address") == address and device.get("connected"):
-                        self.logger.info(f"✓ Successfully connected to {address}!")
-                        return True
-                
-                if i % 5 == 0 and i > 0:
-                    self.logger.debug(f"Still waiting for {address}... ({i}/{timeout}s)")
-            
-            self.logger.error(f"Failed to connect to {address} within {timeout}s")
-            return False
-                
-        except Exception as e:
-            self.logger.error(f"Error during connection attempt to {address}: {e}", exc_info=True)
-            return False
+                interface = await self._get_device_interface(path)
+                await interface.call_connect()
+                return
+        self.logger.error(f"No device with address {address} found")
 
 
     async def disconnect(self, address=None):
@@ -450,38 +354,3 @@ class BleKeyboard:
                     await interface.call_disconnect()
                 else:
                     self.logger.error("No path found for connected device")
-
-    async def remove_device(self, address: str) -> bool:
-        """
-        Remove (forget) a device from BlueZ.
-
-        :param address: MAC address of the device to remove
-        :return: True if removed, False otherwise
-        """
-        devices = await self.devices
-        device_path = None
-
-        for device in devices:
-            if device.get("address") == address:
-                device_path = device.get("path")
-                break
-
-        if not device_path:
-            self.logger.error(f"Device {address} not found")
-            return False
-
-        try:
-            adapter_path = "/org/bluez/hci0"
-            introspection = await self.bus.introspect("org.bluez", adapter_path)
-            adapter_interface = self.bus.get_proxy_object(
-                "org.bluez",
-                adapter_path,
-                introspection
-            ).get_interface("org.bluez.Adapter1")
-
-            await adapter_interface.call_remove_device(device_path)
-            self.logger.info(f"Device {address} removed from BlueZ")
-            return True
-        except Exception as e:
-            self.logger.error(f"Failed to remove device {address}: {e}")
-            return False

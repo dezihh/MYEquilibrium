@@ -138,23 +138,95 @@ Router: [Api/routers/websockets.py](Api/routers/websockets.py)
 
 ## Alte/Alternative Komponenten
 
-### BluetoothManager (NICHT AKTIV)
+Keine aktuell (BluetoothManager wurde entfernt).
 
-[BluetoothManager/](BluetoothManager/) ist eine **umfassendere Bluetooth-Architektur** mit:
-- Multi-Profile Support (HID-Remote, Keyboard, etc.)
-- Secure Pairing Agent
-- GattManager Integration
+## Core-Module Detailliert
 
-**Status:** Vollständig implementiert, aber **NICHT in RemoteController integriert**. Aktuell wird nur `BleKeyboard` genutzt.
+### IrManager – Infrarot Senden & Empfangen
 
-**Use-Case für später:** Falls man mehrere BLE-Profile gleichzeitig unterstützen möchte (z.B. Keyboard UND Audio-Receiver), könnte man RemoteController auf BluetoothManager migrieren.
+**Datei:** [IrManager/IrManager.py](IrManager/IrManager.py)
 
-Beispiel-Integration: [Api/routers/bluetooth_v2_example.py](Api/routers/bluetooth_v2_example.py)
+**Funktionalität:**
+- **Senden:** IR-Befehle per GPIO (Pin 18) an Geräte wie TV, AV-Receiver
+- **Empfangen:** IR-Befehle vom Benutzer per IR-Sensor (GPIO Pin 17) aufnehmen/aufzeichnen
 
-### Alte Dateien
-- `BluetoothManager/BluetoothManager.py.04.02.26` – Backup (löschen?)
-- `BleKeyboard/BleKeyboard.py.sic` – Fragment (löschen?)
-- `Api/routers/bluetooth_v2_example.py` – Template für künftige Multi-Profile-Architektur
+**Hardware:**
+- IR-TX: GPIO 18 (Transmitter)
+- IR-RX: GPIO 17 (Receiver/Sensor)
+- Nutzt `pigpio` für präzise GPIO-Timing
+- Trägerfrequenz: 38 kHz
+
+**Wichtige Methoden:**
+- `send_command(code: [int])` – Sendet einen IR-Code (Mark/Space Array)
+- `send_and_repeat(code: [int])` – Sendet IR-Code wiederholt (0,25s Intervall)
+- `record_command(name: str, websocket)` – Zeichnet IR-Code vom Benutzer auf
+  - Erfordert 2x Drücken derselben Taste für Validierung
+  - Normalisiert Timing-Variationen (±20%)
+
+**Code-Format:**
+IR-Codes werden als integer-Arrays gespeichert:
+```
+[mark1, space1, mark2, space2, ...]  # Mikrosekunden
+```
+Beispiel: `[9024, 4512, 564, ...]`
+
+**Workflow Aufnahme:**
+1. User drückt "Record" in UI
+2. IrManager prompt: "Press the IR button"
+3. User drückt Taste auf IR-Fernbedienung
+4. IrManager speichert Code
+5. IrManager prompt: "Repeat the same button"
+6. User drückt Taste nochmal → Validierung (±20% Toleranz)
+7. Code gespeichert in DB
+
+### RfManager – RF (2,4 GHz) Listener & Decoder
+
+**Datei:** [RfManager/RfManager.py](RfManager/RfManager.py)
+
+**Funktionalität:**
+- **Listener:** Empfängt Befehle von RF-Fernbedienungen (Harmony-kompatibel)
+- **Decoder:** Erkennt Tasten anhand von RF-Payloads
+- **Callback:** Löst Aktionen aus (Button press, repeat, release, sleep)
+
+**Hardware:**
+- Radio: nRF24L01+ (SPI Bus 0)
+- CE Pin: 25
+- CSN Pin: 0 (SPI Chip Select)
+- Datenrate: 2 Mbps
+- Dynamische Payload-Größe
+
+**Konfiguration:**
+- RF-Adressen: `config/rf_addresses.json` (2 Empfänger-Adressen)
+- Button-Keymap: `config/remote_keymap.json` (RF-Command → Button-Name)
+
+**Wichtige Methoden:**
+- `start_listener(addresses: [bytes])` – Startet RF-Listener-Thread
+- `stop_listener()` – Stoppt Listener
+- `set_callback(callback)` – Registriert Button-Press-Handler
+- `set_repeat_callback(callback)` – Handler für Wiederholungen (0x400028)
+- `set_release_callback(callback)` – Handler für Button-Release (0x4f0004)
+
+**RF-Payload Dekodierung:**
+Bekannte RF-Commands:
+- `0x40044c` – Remote Idle (ignoriert)
+- `0x4f0300` – Remote Going to Sleep
+- `0x4f0700` – Remote Woke Up
+- `0x400028` – Repeat (letzte Taste nochmal)
+- `0x4f0004` – All Buttons Released
+- `0xc10000/0xc30000` – Released Button
+- Alles andere: Nachschlag in `remote_keymap.json`
+
+**Setup Remote-Adressen:**
+Script [RfManager/getRemoteAddress.py](RfManager/getRemoteAddress.py) findet RF-Adresse neuer Remotes:
+```bash
+python getRemoteAddress.py
+# Output: RF24 address as hex (z.B. 75a5dc0abb)
+```
+
+**Integration in RemoteController:**
+- IrManager & RfManager werden in `RemoteController.__init__()` erzeugt
+- RfManager-Callbacks sind registriert → auslösende Commands
+- IR-Recording via WebSocket `/ws/commands`
 
 ## Pictures
 
