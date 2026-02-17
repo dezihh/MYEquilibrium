@@ -53,10 +53,24 @@ Die Funktionen sind sauber nach Domänen getrennt. Die Kernlogik liegt in eigene
 
 **UI (späterer Fokus)**
 - [web/](web/) – Flutter Web UI (aktuell nicht im Fokus)
+- [gui/](gui/) – React/Vite UI (build output unter `gui/dist`, wird optional via `/gui` ausgeliefert)
 
 ## API-Übersicht (FastAPI)
 
 OpenAPI/Swagger ist verfügbar unter `/docs` und `/redoc`, sobald die App läuft.
+
+### Web UIs (parallel)
+
+Die Flutter-Web-UI wird unter `/ui` ausgeliefert. Die neue React/Vite-UI kann
+parallel unter `/gui` ausgeliefert werden, wenn zuvor der Build ausgefuehrt wurde:
+
+``` bash
+cd gui
+npm install
+npm run build
+```
+
+Anschliessend startet `python main.py` beide UIs parallel (siehe `/ui` und `/gui`).
 
 ### Bluetooth
 Router: [Api/routers/bluetooth.py](Api/routers/bluetooth.py)
