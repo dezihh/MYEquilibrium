@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type SceneStatus = "active" | "inactive" | "starting" | "stopping";
+type TabKey = "scenes" | "devices" | "settings";
+type SettingsView = "root" | "icons";
 
 type Scene = {
   id: number;
@@ -9,24 +11,81 @@ type Scene = {
   status: SceneStatus;
 };
 
+type Device = {
+  id: number;
+  name: string;
+  model?: string;
+  category: string;
+};
+
+type UserImage = {
+  id: number;
+  filename: string;
+  path: string;
+};
+
+type SettingItem = {
+  id: string;
+  title: string;
+  description?: string;
+  icon: "image" | "bluetooth" | "code" | "macro" | "invert";
+};
+
 const defaultScenes: Scene[] = [
   {
     id: 1,
-    name: "Living Room",
-    devices: ["LG TV", "Denon AVR", "Chromecast"],
-    status: "active",
+    name: "FirstScene",
+    devices: ["Nokia1"],
+    status: "inactive",
   },
   {
     id: 2,
     name: "Movie Night",
-    devices: ["Projector", "AV Receiver", "Blu-ray"],
+    devices: ["Projector", "AVR", "Blu-ray"],
     status: "inactive",
+  },
+];
+
+const defaultDevices: Device[] = [
+  {
+    id: 1,
+    name: "LG OLED",
+    model: "C2",
+    category: "Display",
+  },
+  {
+    id: 2,
+    name: "Denon AVR",
+    model: "X2700H",
+    category: "Amplifier",
   },
   {
     id: 3,
-    name: "Bedroom",
-    devices: ["Samsung TV", "Soundbar"],
-    status: "inactive",
+    name: "Chromecast",
+    category: "Player",
+  },
+];
+
+const settingsItems: SettingItem[] = [
+  {
+    id: "icons",
+    title: "Icons",
+    icon: "image",
+  },
+  {
+    id: "bluetooth",
+    title: "Bluetooth Devices",
+    icon: "bluetooth",
+  },
+  {
+    id: "commands",
+    title: "Commands",
+    icon: "code",
+  },
+  {
+    id: "macros",
+    title: "Macros",
+    icon: "macro",
   },
 ];
 
@@ -37,7 +96,17 @@ export default function App() {
     () => window.localStorage.getItem(STORAGE_KEY) || ""
   );
   const [connected, setConnected] = useState(Boolean(hubUrl));
+  const [activeTab, setActiveTab] = useState<TabKey>("scenes");
   const [scenes, setScenes] = useState<Scene[]>(defaultScenes);
+  const [devices, setDevices] = useState<Device[]>(defaultDevices);
+  const [invertImages, setInvertImages] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [settingsView, setSettingsView] = useState<SettingsView>("root");
+  const [images, setImages] = useState<UserImage[]>([]);
+  const [imagesLoading, setImagesLoading] = useState(false);
+  const [imagesError, setImagesError] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [openImageMenuId, setOpenImageMenuId] = useState<number | null>(null);
 
   const activeScene = useMemo(
     () => scenes.find((scene) => scene.status === "active"),
@@ -66,8 +135,429 @@ export default function App() {
     );
   };
 
+  const addScene = () => {
+    setScenes((prev) => {
+      const nextId = prev.length ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
+      return [
+        ...prev,
+        {
+          id: nextId,
+          name: `New Scene ${nextId}`,
+          devices: ["New Device"],
+          status: "inactive",
+        },
+      ];
+    });
+  };
+
+  const addDevice = () => {
+    setDevices((prev) => {
+      const nextId = prev.length ? Math.max(...prev.map((d) => d.id)) + 1 : 1;
+      return [
+        ...prev,
+        {
+          id: nextId,
+          name: `New Device ${nextId}`,
+          category: "Other",
+        },
+      ];
+    });
+  };
+
+  const fetchImages = async () => {
+    setImagesLoading(true);
+    setImagesError(null);
+    try {
+      const response = await fetch("/images/");
+      if (!response.ok) {
+        throw new Error(`Failed to load images (${response.status})`);
+      }
+      const data = (await response.json()) as UserImage[];
+      setImages(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setImagesError(message);
+    } finally {
+      setImagesLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
+    const body = new FormData();
+    body.append("file", file);
+    const response = await fetch("/images/", {
+      method: "POST",
+      body,
+    });
+    if (!response.ok) {
+      throw new Error(`Upload failed (${response.status})`);
+    }
+  };
+
+  const handleImageDelete = async (imageId: number) => {
+    const response = await fetch(`/images/${imageId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`Delete failed (${response.status})`);
+    }
+  };
+
+  const handleImageRename = async (imageId: number, filename: string) => {
+    const response = await fetch(`/images/${imageId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename }),
+    });
+    if (!response.ok) {
+      throw new Error(`Rename failed (${response.status})`);
+    }
+  };
+
+  const renderHeader = (title: string) => (
+    <header className="page-header">
+      <h2>{title}</h2>
+    </header>
+  );
+
+  const renderIcon = (name: SettingItem["icon"]) => {
+    switch (name) {
+      case "image":
+        return (
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="14" rx="2" />
+            <circle cx="9" cy="10" r="1.5" />
+            <path d="M6 17l4-4 3 3 3-2 2 3" />
+          </svg>
+        );
+      case "bluetooth":
+        return (
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4l4 4-4 4 4 4-4 4V4z" />
+            <path d="M8 8l8 8" />
+            <path d="M8 16l8-8" />
+          </svg>
+        );
+      case "code":
+        return (
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 8l-4 4 4 4" />
+            <path d="M15 8l4 4-4 4" />
+          </svg>
+        );
+      case "macro":
+        return (
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 7h8M8 12h8M8 17h8" />
+            <rect x="4" y="5" width="16" height="14" rx="3" />
+          </svg>
+        );
+      default:
+        return (
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v10" />
+            <path d="M8 14c0 2.2 1.8 4 4 4s4-1.8 4-4" />
+          </svg>
+        );
+    }
+  };
+
+  const renderScenes = () => (
+    <section className="page">
+      {renderHeader("Scenes")}
+
+      <div className="page-summary">
+        <div>
+          <div className="summary__label">Active scene</div>
+          <div className="summary__value">
+            {activeScene ? activeScene.name : "None"}
+          </div>
+        </div>
+        <button className="outline-button" onClick={addScene}>
+          Create scene
+        </button>
+      </div>
+
+      <div className="list">
+        {scenes.map((scene) => (
+          <article className="list-row" key={scene.id}>
+            <div className="list-row__avatar">
+              {scene.name.slice(0, 1)}
+            </div>
+            <div className="list-row__body">
+              <div className="list-row__title">{scene.name}</div>
+              <div className="list-row__subtitle">
+                {scene.devices.join(" • ")}
+              </div>
+            </div>
+            <div className="list-row__actions">
+              <button
+                className={
+                  scene.status === "active"
+                    ? "text-button text-button--danger"
+                    : "text-button"
+                }
+                onClick={() => toggleScene(scene.id)}
+              >
+                {scene.status === "active" ? "Stop" : "Start"}
+              </button>
+              <button className="icon-button" aria-label="More actions">
+                <span>•••</span>
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <button className="fab" aria-label="Add scene" onClick={addScene}>
+        +
+      </button>
+    </section>
+  );
+
+  const renderDevices = () => (
+    <section className="page">
+      {renderHeader("Devices")}
+
+      <div className="list">
+        {devices.map((device) => (
+          <article className="list-row" key={device.id}>
+            <div className="list-row__avatar list-row__avatar--muted">
+              {device.name.slice(0, 1)}
+            </div>
+            <div className="list-row__body">
+              <div className="list-row__title">{device.name}</div>
+              <div className="list-row__subtitle">
+                {device.category}
+                {device.model ? ` • ${device.model}` : ""}
+              </div>
+            </div>
+            <div className="list-row__actions">
+              <button className="icon-button" aria-label="More actions">
+                <span>•••</span>
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <button className="fab" aria-label="Add device" onClick={addDevice}>
+        +
+      </button>
+    </section>
+  );
+
+  const renderSettingsRoot = () => (
+    <section className="page">
+      {renderHeader("Settings")}
+
+      <div className="list">
+        {settingsItems.map((item) => (
+          <article
+            className="list-row list-row--clickable"
+            key={item.id}
+            onClick={() => {
+              if (item.id === "icons") {
+                setSettingsView("icons");
+              }
+            }}
+          >
+            <div className="list-row__icon">{renderIcon(item.icon)}</div>
+            <div className="list-row__body">
+              <div className="list-row__title">{item.title}</div>
+            </div>
+            <div className="list-row__actions">
+              <span className="list-row__chevron">&gt;</span>
+            </div>
+          </article>
+        ))}
+        <article className="list-row list-row--stacked">
+          <div className="list-row__icon">{renderIcon("invert")}</div>
+          <div className="list-row__body">
+            <div className="list-row__title">Invert Images in Dark Mode</div>
+            <div className="list-row__subtitle">
+              Inverts all images for scenes and devices while in dark mode
+              (works especially well for simple icons).
+            </div>
+          </div>
+          <div className="list-row__actions">
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={invertImages}
+                onChange={() => setInvertImages((prev) => !prev)}
+              />
+              <span className="switch__track" />
+            </label>
+          </div>
+        </article>
+        <article className="list-row">
+          <div className="list-row__icon">D</div>
+          <div className="list-row__body">
+            <div className="list-row__title">Dark Mode</div>
+          </div>
+          <div className="list-row__actions">
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={() => setDarkMode((prev) => !prev)}
+              />
+              <span className="switch__track" />
+            </label>
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+
+  const renderIconsPage = () => (
+    <section className="page">
+      <header className="page-header page-header--with-back">
+        <button
+          className="subpage-header__button"
+          onClick={() => setSettingsView("root")}
+          aria-label="Back"
+        >
+          &lt;
+        </button>
+        <h2>Icons</h2>
+      </header>
+
+      {imagesLoading ? (
+        <div className="page-empty">Loading images...</div>
+      ) : imagesError ? (
+        <div className="page-empty">{imagesError}</div>
+      ) : images.length === 0 ? (
+        <div className="page-empty">No images yet.</div>
+      ) : (
+        <div className="list list--menu">
+          {images.map((image) => (
+            <article className="list-row" key={image.id}>
+              <div className="list-row__icon list-row__icon--image">
+                <img
+                  src={`/images/${image.id}`}
+                  alt={image.filename}
+                  loading="lazy"
+                />
+              </div>
+              <div className="list-row__body">
+                <div className="list-row__title">{image.filename}</div>
+                <div className="list-row__subtitle">{image.path}</div>
+              </div>
+              <div className="list-row__actions">
+                <div className="menu-anchor">
+                  <button
+                    className="icon-button"
+                    aria-label="Image menu"
+                    aria-expanded={openImageMenuId === image.id}
+                    onClick={() =>
+                      setOpenImageMenuId((current) =>
+                        current === image.id ? null : image.id
+                      )
+                    }
+                  >
+                    <span>•••</span>
+                  </button>
+                  {openImageMenuId === image.id && (
+                    <div className="menu">
+                      <button
+                        className="menu__item"
+                        onClick={async () => {
+                          const nextName = window.prompt(
+                            "New name",
+                            image.filename
+                          );
+                          if (!nextName) {
+                            setOpenImageMenuId(null);
+                            return;
+                          }
+                          try {
+                            await handleImageRename(image.id, nextName);
+                            setOpenImageMenuId(null);
+                            await fetchImages();
+                          } catch (error) {
+                            const message =
+                              error instanceof Error
+                                ? error.message
+                                : "Rename failed";
+                            setImagesError(message);
+                          }
+                        }}
+                      >
+                        Rename
+                      </button>
+                      <button
+                        className="menu__item menu__item--danger"
+                        onClick={async () => {
+                          try {
+                            await handleImageDelete(image.id);
+                            setOpenImageMenuId(null);
+                            await fetchImages();
+                          } catch (error) {
+                            const message =
+                              error instanceof Error
+                                ? error.message
+                                : "Delete failed";
+                            setImagesError(message);
+                          }
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <input
+        ref={imageInputRef}
+        className="file-input"
+        type="file"
+        accept="image/*"
+        onChange={async (event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          try {
+            await handleImageUpload(file);
+            await fetchImages();
+          } catch (error) {
+            const message =
+              error instanceof Error ? error.message : "Upload failed";
+            setImagesError(message);
+          } finally {
+            event.target.value = "";
+          }
+        }}
+      />
+
+      <button
+        className="fab"
+        aria-label="Add icon"
+        onClick={() => imageInputRef.current?.click()}
+      >
+        +
+      </button>
+    </section>
+  );
+
+  const renderSettings = () =>
+    settingsView === "icons" ? renderIconsPage() : renderSettingsRoot();
+
+  useEffect(() => {
+    if (settingsView === "icons") {
+      fetchImages();
+    }
+  }, [settingsView]);
+
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? "app--dark" : "app--light"}`}>
       <div className="app__glow" aria-hidden="true" />
       <main className="app__frame">
         {!connected ? (
@@ -93,86 +583,41 @@ export default function App() {
               device.
             </div>
           </section>
+        ) : activeTab === "scenes" ? (
+          renderScenes()
+        ) : activeTab === "devices" ? (
+          renderDevices()
         ) : (
-          <section className="scenes">
-            <header className="scenes__header">
-              <div>
-                <h2>Scenes</h2>
-                <p>Quick control for your active setups.</p>
-              </div>
-              <div className="scenes__actions">
-                <div className="status-pill">
-                  <span className="status-pill__dot" />
-                  {hubUrl}
-                </div>
-                <button className="ghost-button" onClick={handleDisconnect}>
-                  Disconnect
-                </button>
-              </div>
-            </header>
-
-            <div className="scenes__summary">
-              <div>
-                <div className="summary__label">Active scene</div>
-                <div className="summary__value">
-                  {activeScene ? activeScene.name : "None"}
-                </div>
-              </div>
-              <button className="outline-button">Create scene</button>
-            </div>
-
-            <div className="scene-list">
-              {scenes.map((scene) => (
-                <article className="scene-card" key={scene.id}>
-                  <div className="scene-card__icon">
-                    {scene.name.slice(0, 1)}
-                  </div>
-                  <div className="scene-card__body">
-                    <div className="scene-card__title">{scene.name}</div>
-                    <div className="scene-card__subtitle">
-                      {scene.devices.join(" • ")}
-                    </div>
-                    <div className={`scene-card__status scene-card__status--${scene.status}`}>
-                      {scene.status}
-                    </div>
-                  </div>
-                  <div className="scene-card__actions">
-                    <button
-                      className={
-                        scene.status === "active"
-                          ? "danger-button"
-                          : "primary-button"
-                      }
-                      onClick={() => toggleScene(scene.id)}
-                    >
-                      {scene.status === "active" ? "Stop" : "Start"}
-                    </button>
-                    <button className="icon-button" aria-label="More actions">
-                      <span>•••</span>
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            <button className="fab" aria-label="Add scene">
-              +
-            </button>
-          </section>
+          renderSettings()
         )}
       </main>
 
       <nav className="bottom-nav" aria-label="Primary">
-        <button className="bottom-nav__item bottom-nav__item--active">
-          <span className="bottom-nav__icon">◼</span>
+        <button
+          className={`bottom-nav__item ${
+            activeTab === "scenes" ? "bottom-nav__item--active" : ""
+          }`}
+          onClick={() => setActiveTab("scenes")}
+        >
+          <span className="bottom-nav__icon" aria-hidden="true">▣</span>
           Scenes
         </button>
-        <button className="bottom-nav__item" disabled>
-          <span className="bottom-nav__icon">◆</span>
+        <button
+          className={`bottom-nav__item ${
+            activeTab === "devices" ? "bottom-nav__item--active" : ""
+          }`}
+          onClick={() => setActiveTab("devices")}
+        >
+          <span className="bottom-nav__icon" aria-hidden="true">▢</span>
           Devices
         </button>
-        <button className="bottom-nav__item" disabled>
-          <span className="bottom-nav__icon">●</span>
+        <button
+          className={`bottom-nav__item ${
+            activeTab === "settings" ? "bottom-nav__item--active" : ""
+          }`}
+          onClick={() => setActiveTab("settings")}
+        >
+          <span className="bottom-nav__icon" aria-hidden="true">⚙</span>
           Settings
         </button>
       </nav>

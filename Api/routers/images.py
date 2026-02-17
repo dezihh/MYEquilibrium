@@ -3,6 +3,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from fastapi import APIRouter, UploadFile, HTTPException
+from pydantic import BaseModel
 from sqlmodel import select
 from starlette.responses import FileResponse
 
@@ -16,6 +17,10 @@ router = APIRouter(
     tags=["Images"],
     responses={404: {"description": "Not found"}}
 )
+
+
+class ImageUpdate(BaseModel):
+    filename: str
 
 @router.get("/", tags=["Images"])
 def get_all_images(session: SessionDep):
@@ -65,4 +70,19 @@ def delete_image(image_id: int, session: SessionDep):
     if path.is_file():
         path.unlink()
     return {"message": f"Successfully deleted {image.filename}"}
+
+
+@router.patch("/{image_id}", tags=["Images"], response_model=UserImage)
+def update_image(image_id: int, update: ImageUpdate, session: SessionDep):
+    image = session.get(UserImage, image_id)
+    if not image:
+        raise HTTPException(status_code=404, detail="Image not found")
+    new_name = update.filename.strip()
+    if not new_name:
+        raise HTTPException(status_code=400, detail="Filename cannot be empty")
+    image.filename = new_name
+    session.add(image)
+    session.commit()
+    session.refresh(image)
+    return image
 
