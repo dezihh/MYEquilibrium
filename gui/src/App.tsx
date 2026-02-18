@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
 
 type SceneStatus = "active" | "inactive" | "starting" | "stopping";
 type TabKey = "scenes" | "devices" | "settings";
@@ -29,6 +36,30 @@ type SettingItem = {
   title: string;
   description?: string;
   icon: "image" | "bluetooth" | "code" | "macro" | "invert";
+};
+
+type ButtonVariant =
+  | "primary"
+  | "outline"
+  | "ghost"
+  | "danger"
+  | "text"
+  | "icon";
+type ButtonTone = "default" | "danger";
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
+  tone?: ButtonTone;
+};
+
+type ListRowProps = {
+  leading?: ReactNode;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  actions?: ReactNode;
+  className?: string;
+  clickable?: boolean;
+  onClick?: () => void;
 };
 
 const defaultScenes: Scene[] = [
@@ -91,6 +122,112 @@ const settingsItems: SettingItem[] = [
 
 const STORAGE_KEY = "equilibrium_hub_url";
 
+const cx = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(" ");
+
+const Button = ({
+  variant = "primary",
+  tone = "default",
+  className,
+  ...props
+}: ButtonProps) => (
+  <button
+    className={cx(
+      "button",
+      `button--${variant}`,
+      tone === "danger" && "button--tone-danger",
+      className
+    )}
+    {...props}
+  />
+);
+
+const IconButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => (
+  <Button variant="icon" {...props} />
+);
+
+const ListRow = ({
+  leading,
+  title,
+  subtitle,
+  actions,
+  className,
+  clickable,
+  onClick,
+}: ListRowProps) => (
+  <article
+    className={cx("list-row", clickable && "list-row--clickable", className)}
+    onClick={onClick}
+  >
+    {leading}
+    <div className="list-row__body">
+      <div className="list-row__title">{title}</div>
+      {subtitle ? <div className="list-row__subtitle">{subtitle}</div> : null}
+    </div>
+    {actions ? <div className="list-row__actions">{actions}</div> : null}
+  </article>
+);
+
+const PageHeader = ({
+  title,
+  onBack,
+}: {
+  title: string;
+  onBack?: () => void;
+}) => (
+  <header className={cx("page-header", onBack && "page-header--with-back")}>
+    {onBack ? (
+      <IconButton
+        className="page-header__button"
+        onClick={onBack}
+        aria-label="Back"
+      >
+        <span aria-hidden="true">&lt;</span>
+      </IconButton>
+    ) : null}
+    <h2>{title}</h2>
+  </header>
+);
+
+const PageEmpty = ({ children }: { children: ReactNode }) => (
+  <div className="page-empty">{children}</div>
+);
+
+const iconMap: Record<SettingItem["icon"], ReactNode> = {
+  image: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="4" y="5" width="16" height="14" rx="2" />
+      <circle cx="9" cy="10" r="1.5" />
+      <path d="M6 17l4-4 3 3 3-2 2 3" />
+    </svg>
+  ),
+  bluetooth: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4l4 4-4 4 4 4-4 4V4z" />
+      <path d="M8 8l8 8" />
+      <path d="M8 16l8-8" />
+    </svg>
+  ),
+  code: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 8l-4 4 4 4" />
+      <path d="M15 8l4 4-4 4" />
+    </svg>
+  ),
+  macro: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 7h8M8 12h8M8 17h8" />
+      <rect x="4" y="5" width="16" height="14" rx="3" />
+    </svg>
+  ),
+  invert: (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4v10" />
+      <path d="M8 14c0 2.2 1.8 4 4 4s4-1.8 4-4" />
+    </svg>
+  ),
+};
+
 export default function App() {
   const [hubUrl, setHubUrl] = useState(
     () => window.localStorage.getItem(STORAGE_KEY) || ""
@@ -117,10 +254,6 @@ export default function App() {
     if (!hubUrl.trim()) return;
     window.localStorage.setItem(STORAGE_KEY, hubUrl.trim());
     setConnected(true);
-  };
-
-  const handleDisconnect = () => {
-    setConnected(false);
   };
 
   const toggleScene = (sceneId: number) => {
@@ -216,57 +349,9 @@ export default function App() {
     }
   };
 
-  const renderHeader = (title: string) => (
-    <header className="page-header">
-      <h2>{title}</h2>
-    </header>
-  );
-
-  const renderIcon = (name: SettingItem["icon"]) => {
-    switch (name) {
-      case "image":
-        return (
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="4" y="5" width="16" height="14" rx="2" />
-            <circle cx="9" cy="10" r="1.5" />
-            <path d="M6 17l4-4 3 3 3-2 2 3" />
-          </svg>
-        );
-      case "bluetooth":
-        return (
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 4l4 4-4 4 4 4-4 4V4z" />
-            <path d="M8 8l8 8" />
-            <path d="M8 16l8-8" />
-          </svg>
-        );
-      case "code":
-        return (
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 8l-4 4 4 4" />
-            <path d="M15 8l4 4-4 4" />
-          </svg>
-        );
-      case "macro":
-        return (
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8 7h8M8 12h8M8 17h8" />
-            <rect x="4" y="5" width="16" height="14" rx="3" />
-          </svg>
-        );
-      default:
-        return (
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 4v10" />
-            <path d="M8 14c0 2.2 1.8 4 4 4s4-1.8 4-4" />
-          </svg>
-        );
-    }
-  };
-
   const renderScenes = () => (
     <section className="page">
-      {renderHeader("Scenes")}
+      <PageHeader title="Scenes" />
 
       <div className="page-summary">
         <div>
@@ -275,39 +360,35 @@ export default function App() {
             {activeScene ? activeScene.name : "None"}
           </div>
         </div>
-        <button className="outline-button" onClick={addScene}>
+        <Button variant="outline" onClick={addScene}>
           Create scene
-        </button>
+        </Button>
       </div>
 
       <div className="list">
         {scenes.map((scene) => (
-          <article className="list-row" key={scene.id}>
-            <div className="list-row__avatar">
-              {scene.name.slice(0, 1)}
-            </div>
-            <div className="list-row__body">
-              <div className="list-row__title">{scene.name}</div>
-              <div className="list-row__subtitle">
-                {scene.devices.join(" • ")}
-              </div>
-            </div>
-            <div className="list-row__actions">
-              <button
-                className={
-                  scene.status === "active"
-                    ? "text-button text-button--danger"
-                    : "text-button"
-                }
-                onClick={() => toggleScene(scene.id)}
-              >
-                {scene.status === "active" ? "Stop" : "Start"}
-              </button>
-              <button className="icon-button" aria-label="More actions">
-                <span>•••</span>
-              </button>
-            </div>
-          </article>
+          <ListRow
+            key={scene.id}
+            leading={
+              <div className="list-row__avatar">{scene.name.slice(0, 1)}</div>
+            }
+            title={scene.name}
+            subtitle={scene.devices.join(" • ")}
+            actions={
+              <>
+                <Button
+                  variant="text"
+                  tone={scene.status === "active" ? "danger" : "default"}
+                  onClick={() => toggleScene(scene.id)}
+                >
+                  {scene.status === "active" ? "Stop" : "Start"}
+                </Button>
+                <IconButton aria-label="More actions">
+                  <span>•••</span>
+                </IconButton>
+              </>
+            }
+          />
         ))}
       </div>
 
@@ -319,27 +400,25 @@ export default function App() {
 
   const renderDevices = () => (
     <section className="page">
-      {renderHeader("Devices")}
+      <PageHeader title="Devices" />
 
       <div className="list">
         {devices.map((device) => (
-          <article className="list-row" key={device.id}>
-            <div className="list-row__avatar list-row__avatar--muted">
-              {device.name.slice(0, 1)}
-            </div>
-            <div className="list-row__body">
-              <div className="list-row__title">{device.name}</div>
-              <div className="list-row__subtitle">
-                {device.category}
-                {device.model ? ` • ${device.model}` : ""}
+          <ListRow
+            key={device.id}
+            leading={
+              <div className="list-row__avatar list-row__avatar--muted">
+                {device.name.slice(0, 1)}
               </div>
-            </div>
-            <div className="list-row__actions">
-              <button className="icon-button" aria-label="More actions">
+            }
+            title={device.name}
+            subtitle={`${device.category}${device.model ? ` • ${device.model}` : ""}`}
+            actions={
+              <IconButton aria-label="More actions">
                 <span>•••</span>
-              </button>
-            </div>
-          </article>
+              </IconButton>
+            }
+          />
         ))}
       </div>
 
@@ -351,38 +430,31 @@ export default function App() {
 
   const renderSettingsRoot = () => (
     <section className="page">
-      {renderHeader("Settings")}
+      <PageHeader title="Settings" />
 
       <div className="list">
         {settingsItems.map((item) => (
-          <article
-            className="list-row list-row--clickable"
+          <ListRow
             key={item.id}
+            clickable
             onClick={() => {
               if (item.id === "icons") {
                 setSettingsView("icons");
               }
             }}
-          >
-            <div className="list-row__icon">{renderIcon(item.icon)}</div>
-            <div className="list-row__body">
-              <div className="list-row__title">{item.title}</div>
-            </div>
-            <div className="list-row__actions">
-              <span className="list-row__chevron">&gt;</span>
-            </div>
-          </article>
+            leading={<div className="list-row__icon">{iconMap[item.icon]}</div>}
+            title={item.title}
+            actions={<span className="list-row__chevron">&gt;</span>}
+          />
         ))}
-        <article className="list-row list-row--stacked">
-          <div className="list-row__icon">{renderIcon("invert")}</div>
-          <div className="list-row__body">
-            <div className="list-row__title">Invert Images in Dark Mode</div>
-            <div className="list-row__subtitle">
-              Inverts all images for scenes and devices while in dark mode
-              (works especially well for simple icons).
-            </div>
-          </div>
-          <div className="list-row__actions">
+        <ListRow
+          className="list-row--stacked"
+          leading={<div className="list-row__icon">{iconMap.invert}</div>}
+          title="Invert Images in Dark Mode"
+          subtitle={
+            "Inverts all images for scenes and devices while in dark mode (works especially well for simple icons)."
+          }
+          actions={
             <label className="switch">
               <input
                 type="checkbox"
@@ -391,14 +463,12 @@ export default function App() {
               />
               <span className="switch__track" />
             </label>
-          </div>
-        </article>
-        <article className="list-row">
-          <div className="list-row__icon">D</div>
-          <div className="list-row__body">
-            <div className="list-row__title">Dark Mode</div>
-          </div>
-          <div className="list-row__actions">
+          }
+        />
+        <ListRow
+          leading={<div className="list-row__icon">D</div>}
+          title="Dark Mode"
+          actions={
             <label className="switch">
               <input
                 type="checkbox"
@@ -407,50 +477,41 @@ export default function App() {
               />
               <span className="switch__track" />
             </label>
-          </div>
-        </article>
+          }
+        />
       </div>
     </section>
   );
 
   const renderIconsPage = () => (
     <section className="page">
-      <header className="page-header page-header--with-back">
-        <button
-          className="subpage-header__button"
-          onClick={() => setSettingsView("root")}
-          aria-label="Back"
-        >
-          &lt;
-        </button>
-        <h2>Icons</h2>
-      </header>
+      <PageHeader title="Icons" onBack={() => setSettingsView("root")} />
 
       {imagesLoading ? (
-        <div className="page-empty">Loading images...</div>
+        <PageEmpty>Loading images...</PageEmpty>
       ) : imagesError ? (
-        <div className="page-empty">{imagesError}</div>
+        <PageEmpty>{imagesError}</PageEmpty>
       ) : images.length === 0 ? (
-        <div className="page-empty">No images yet.</div>
+        <PageEmpty>No images yet.</PageEmpty>
       ) : (
         <div className="list list--menu">
           {images.map((image) => (
-            <article className="list-row" key={image.id}>
-              <div className="list-row__icon list-row__icon--image">
-                <img
-                  src={`/images/${image.id}`}
-                  alt={image.filename}
-                  loading="lazy"
-                />
-              </div>
-              <div className="list-row__body">
-                <div className="list-row__title">{image.filename}</div>
-                <div className="list-row__subtitle">{image.path}</div>
-              </div>
-              <div className="list-row__actions">
+            <ListRow
+              key={image.id}
+              leading={
+                <div className="list-row__icon list-row__icon--image">
+                  <img
+                    src={`/images/${image.id}`}
+                    alt={image.filename}
+                    loading="lazy"
+                  />
+                </div>
+              }
+              title={image.filename}
+              subtitle={image.path}
+              actions={
                 <div className="menu-anchor">
-                  <button
-                    className="icon-button"
+                  <IconButton
                     aria-label="Image menu"
                     aria-expanded={openImageMenuId === image.id}
                     onClick={() =>
@@ -460,7 +521,7 @@ export default function App() {
                     }
                   >
                     <span>•••</span>
-                  </button>
+                  </IconButton>
                   {openImageMenuId === image.id && (
                     <div className="menu">
                       <button
@@ -510,8 +571,8 @@ export default function App() {
                     </div>
                   )}
                 </div>
-              </div>
-            </article>
+              }
+            />
           ))}
         </div>
       )}
@@ -575,9 +636,9 @@ export default function App() {
                 placeholder="192.168.0.123:8000"
               />
             </label>
-            <button className="primary-button" onClick={handleConnect}>
+            <Button variant="primary" onClick={handleConnect}>
               Connect
-            </button>
+            </Button>
             <div className="connect__hint">
               Make sure your Equilibrium hub is online and reachable from this
               device.
