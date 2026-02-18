@@ -90,7 +90,7 @@ class RemoteController:
 
     status_callback: AsyncJsonCallback|None = None
 
-    cached_commands: {int:Command} = None
+    cached_commands: dict[int, Command] = {}
 
     @classmethod
     async def create(cls, rf_addresses: list[bytes], ha_url: str|None = None, ha_token: str|None = None):
@@ -99,6 +99,7 @@ class RemoteController:
         self.logger = logging.getLogger(__package__)
 
         self.is_dev = False
+        self.cached_commands = {}
 
         from IrManager.IrManager import IrManager
         from RfManager.RfManager import RfManager
@@ -237,6 +238,9 @@ class RemoteController:
 
 
     async def send_command(self, command_id: int, press_without_release = False, from_start: bool = False, from_stop: bool = False):
+        if self.cached_commands is None:
+            self.cached_commands = {}
+
         command_db = self.cached_commands.get(command_id)
 
         if command_db:

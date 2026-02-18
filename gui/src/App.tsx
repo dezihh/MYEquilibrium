@@ -1,66 +1,22 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ButtonHTMLAttributes,
-  type ReactNode,
-} from "react";
-
-type SceneStatus = "active" | "inactive" | "starting" | "stopping";
-type TabKey = "scenes" | "devices" | "settings";
-type SettingsView = "root" | "icons";
-
-type Scene = {
-  id: number;
-  name: string;
-  devices: string[];
-  status: SceneStatus;
-};
-
-type Device = {
-  id: number;
-  name: string;
-  model?: string;
-  category: string;
-};
-
-type UserImage = {
-  id: number;
-  filename: string;
-  path: string;
-};
-
-type SettingItem = {
-  id: string;
-  title: string;
-  description?: string;
-  icon: "image" | "bluetooth" | "code" | "macro" | "invert";
-};
-
-type ButtonVariant =
-  | "primary"
-  | "outline"
-  | "ghost"
-  | "danger"
-  | "text"
-  | "icon";
-type ButtonTone = "default" | "danger";
-
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ButtonVariant;
-  tone?: ButtonTone;
-};
-
-type ListRowProps = {
-  leading?: ReactNode;
-  title: ReactNode;
-  subtitle?: ReactNode;
-  actions?: ReactNode;
-  className?: string;
-  clickable?: boolean;
-  onClick?: () => void;
-};
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ConnectPage } from "./pages/ConnectPage";
+import { CommandEditPage, type CommandDraft } from "./pages/CommandEditPage";
+import { CommandsPage } from "./pages/CommandsPage";
+import { DevicesPage } from "./pages/DevicesPage";
+import { IconsPage } from "./pages/IconsPage";
+import { ScenesPage } from "./pages/ScenesPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { useMenuState } from "./hooks/useMenuState";
+import type {
+  Command,
+  CommandDetail,
+  Device,
+  Scene,
+  SettingItem,
+  SettingsView,
+  TabKey,
+  UserImage,
+} from "./types";
 
 const defaultScenes: Scene[] = [
   {
@@ -122,111 +78,6 @@ const settingsItems: SettingItem[] = [
 
 const STORAGE_KEY = "equilibrium_hub_url";
 
-const cx = (...classes: Array<string | false | null | undefined>) =>
-  classes.filter(Boolean).join(" ");
-
-const Button = ({
-  variant = "primary",
-  tone = "default",
-  className,
-  ...props
-}: ButtonProps) => (
-  <button
-    className={cx(
-      "button",
-      `button--${variant}`,
-      tone === "danger" && "button--tone-danger",
-      className
-    )}
-    {...props}
-  />
-);
-
-const IconButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <Button variant="icon" {...props} />
-);
-
-const ListRow = ({
-  leading,
-  title,
-  subtitle,
-  actions,
-  className,
-  clickable,
-  onClick,
-}: ListRowProps) => (
-  <article
-    className={cx("list-row", clickable && "list-row--clickable", className)}
-    onClick={onClick}
-  >
-    {leading}
-    <div className="list-row__body">
-      <div className="list-row__title">{title}</div>
-      {subtitle ? <div className="list-row__subtitle">{subtitle}</div> : null}
-    </div>
-    {actions ? <div className="list-row__actions">{actions}</div> : null}
-  </article>
-);
-
-const PageHeader = ({
-  title,
-  onBack,
-}: {
-  title: string;
-  onBack?: () => void;
-}) => (
-  <header className={cx("page-header", onBack && "page-header--with-back")}>
-    {onBack ? (
-      <IconButton
-        className="page-header__button"
-        onClick={onBack}
-        aria-label="Back"
-      >
-        <span aria-hidden="true">&lt;</span>
-      </IconButton>
-    ) : null}
-    <h2>{title}</h2>
-  </header>
-);
-
-const PageEmpty = ({ children }: { children: ReactNode }) => (
-  <div className="page-empty">{children}</div>
-);
-
-const iconMap: Record<SettingItem["icon"], ReactNode> = {
-  image: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="4" y="5" width="16" height="14" rx="2" />
-      <circle cx="9" cy="10" r="1.5" />
-      <path d="M6 17l4-4 3 3 3-2 2 3" />
-    </svg>
-  ),
-  bluetooth: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 4l4 4-4 4 4 4-4 4V4z" />
-      <path d="M8 8l8 8" />
-      <path d="M8 16l8-8" />
-    </svg>
-  ),
-  code: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M9 8l-4 4 4 4" />
-      <path d="M15 8l4 4-4 4" />
-    </svg>
-  ),
-  macro: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 7h8M8 12h8M8 17h8" />
-      <rect x="4" y="5" width="16" height="14" rx="3" />
-    </svg>
-  ),
-  invert: (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 4v10" />
-      <path d="M8 14c0 2.2 1.8 4 4 4s4-1.8 4-4" />
-    </svg>
-  ),
-};
 
 export default function App() {
   const [hubUrl, setHubUrl] = useState(
@@ -242,8 +93,25 @@ export default function App() {
   const [images, setImages] = useState<UserImage[]>([]);
   const [imagesLoading, setImagesLoading] = useState(false);
   const [imagesError, setImagesError] = useState<string | null>(null);
+  const [commands, setCommands] = useState<Command[]>([]);
+  const [commandsLoading, setCommandsLoading] = useState(false);
+  const [commandsError, setCommandsError] = useState<string | null>(null);
+  const [commandEdit, setCommandEdit] = useState<CommandDetail | null>(null);
+  const [commandEditLoading, setCommandEditLoading] = useState(false);
+  const [commandEditLoadError, setCommandEditLoadError] = useState<
+    string | null
+  >(null);
+  const [commandEditSaveError, setCommandEditSaveError] = useState<
+    string | null
+  >(null);
+  const [editingCommandId, setEditingCommandId] = useState<number | null>(null);
+  const [deviceOptions, setDeviceOptions] = useState<Device[]>([]);
+  const [deviceOptionsError, setDeviceOptionsError] = useState<string | null>(
+    null
+  );
   const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const [openImageMenuId, setOpenImageMenuId] = useState<number | null>(null);
+  const imageMenu = useMenuState<number>();
+  const commandsMenu = useMenuState<number>();
 
   const activeScene = useMemo(
     () => scenes.find((scene) => scene.status === "active"),
@@ -315,339 +183,313 @@ export default function App() {
     }
   };
 
-  const handleImageUpload = async (file: File) => {
-    const body = new FormData();
-    body.append("file", file);
-    const response = await fetch("/images/", {
-      method: "POST",
-      body,
-    });
-    if (!response.ok) {
-      throw new Error(`Upload failed (${response.status})`);
+  const fetchCommandDetail = async (commandId: number) => {
+    setCommandEditLoading(true);
+    setCommandEditLoadError(null);
+    try {
+      const response = await fetch(`/commands/${commandId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to load command (${response.status})`);
+      }
+      const data = (await response.json()) as CommandDetail;
+      setCommandEdit(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setCommandEditLoadError(message);
+    } finally {
+      setCommandEditLoading(false);
     }
   };
 
-  const handleImageDelete = async (imageId: number) => {
-    const response = await fetch(`/images/${imageId}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) {
-      throw new Error(`Delete failed (${response.status})`);
+  const fetchDeviceOptions = async () => {
+    setDeviceOptionsError(null);
+    try {
+      const response = await fetch("/devices/");
+      if (!response.ok) {
+        throw new Error(`Failed to load devices (${response.status})`);
+      }
+      const data = (await response.json()) as Device[];
+      setDeviceOptions(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setDeviceOptionsError(message);
     }
   };
 
-  const handleImageRename = async (imageId: number, filename: string) => {
-    const response = await fetch(`/images/${imageId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filename }),
-    });
-    if (!response.ok) {
-      throw new Error(`Rename failed (${response.status})`);
+  const fetchCommands = async () => {
+    setCommandsLoading(true);
+    setCommandsError(null);
+    try {
+      const response = await fetch("/commands/");
+      if (!response.ok) {
+        throw new Error(`Failed to load commands (${response.status})`);
+      }
+      const data = (await response.json()) as Command[];
+      setCommands(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setCommandsError(message);
+    } finally {
+      setCommandsLoading(false);
+    }
+  };
+  const toErrorMessage = (error: unknown, fallback: string) =>
+    error instanceof Error ? error.message : fallback;
+
+  const uploadImage = async (file: File) => {
+    setImagesError(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const response = await fetch("/images/", {
+        method: "POST",
+        body,
+      });
+      if (!response.ok) {
+        throw new Error(`Upload failed (${response.status})`);
+      }
+      await fetchImages();
+    } catch (error) {
+      setImagesError(toErrorMessage(error, "Upload failed"));
     }
   };
 
-  const renderScenes = () => (
-    <section className="page">
-      <PageHeader title="Scenes" />
+  const deleteImage = async (imageId: number) => {
+    setImagesError(null);
+    try {
+      const response = await fetch(`/images/${imageId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Delete failed (${response.status})`);
+      }
+      await fetchImages();
+    } catch (error) {
+      setImagesError(toErrorMessage(error, "Delete failed"));
+    }
+  };
 
-      <div className="page-summary">
-        <div>
-          <div className="summary__label">Active scene</div>
-          <div className="summary__value">
-            {activeScene ? activeScene.name : "None"}
-          </div>
-        </div>
-        <Button variant="outline" onClick={addScene}>
-          Create scene
-        </Button>
-      </div>
+  const renameImage = async (imageId: number, filename: string) => {
+    setImagesError(null);
+    try {
+      const response = await fetch(`/images/${imageId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ filename }),
+      });
+      if (!response.ok) {
+        throw new Error(`Rename failed (${response.status})`);
+      }
+      await fetchImages();
+    } catch (error) {
+      setImagesError(toErrorMessage(error, "Rename failed"));
+    }
+  };
 
-      <div className="list">
-        {scenes.map((scene) => (
-          <ListRow
-            key={scene.id}
-            leading={
-              <div className="list-row__avatar">{scene.name.slice(0, 1)}</div>
-            }
-            title={scene.name}
-            subtitle={scene.devices.join(" • ")}
-            actions={
-              <>
-                <Button
-                  variant="text"
-                  tone={scene.status === "active" ? "danger" : "default"}
-                  onClick={() => toggleScene(scene.id)}
-                >
-                  {scene.status === "active" ? "Stop" : "Start"}
-                </Button>
-                <IconButton aria-label="More actions">
-                  <span>•••</span>
-                </IconButton>
-              </>
-            }
-          />
-        ))}
-      </div>
+  const sendCommand = async (commandId: number) => {
+    setCommandsError(null);
+    try {
+      const response = await fetch(`/commands/${commandId}/send`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error(`Send failed (${response.status})`);
+      }
+    } catch (error) {
+      setCommandsError(toErrorMessage(error, "Send failed"));
+    }
+  };
 
-      <button className="fab" aria-label="Add scene" onClick={addScene}>
-        +
-      </button>
-    </section>
-  );
+  const deleteCommand = async (commandId: number) => {
+    setCommandsError(null);
+    try {
+      const response = await fetch(`/commands/${commandId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Delete failed (${response.status})`);
+      }
+      await fetchCommands();
+    } catch (error) {
+      setCommandsError(toErrorMessage(error, "Delete failed"));
+    }
+  };
 
-  const renderDevices = () => (
-    <section className="page">
-      <PageHeader title="Devices" />
+  const buildCommandPayload = (draft: CommandDraft) => {
+    const isNetwork = draft.type === "network";
+    const isBluetooth = draft.type === "bluetooth";
+    const isIntegration = draft.type === "integration";
+    return {
+      name: draft.name,
+      device_id: draft.device_id,
+      command_group: draft.command_group,
+      type: draft.type,
+      button: draft.button,
+      host: isNetwork ? draft.host : null,
+      method: isNetwork ? draft.method : null,
+      body: isNetwork ? draft.body : null,
+      bt_action:
+        isBluetooth && draft.bt_key_type === "regular" ? draft.bt_key : null,
+      bt_media_action:
+        isBluetooth && draft.bt_key_type === "media" ? draft.bt_key : null,
+      integration_action: isIntegration ? draft.integration_action : null,
+      integration_entity: isIntegration ? draft.integration_entity : null,
+    };
+  };
 
-      <div className="list">
-        {devices.map((device) => (
-          <ListRow
-            key={device.id}
-            leading={
-              <div className="list-row__avatar list-row__avatar--muted">
-                {device.name.slice(0, 1)}
-              </div>
-            }
-            title={device.name}
-            subtitle={`${device.category}${device.model ? ` • ${device.model}` : ""}`}
-            actions={
-              <IconButton aria-label="More actions">
-                <span>•••</span>
-              </IconButton>
-            }
-          />
-        ))}
-      </div>
+  const saveEditedCommand = async (draft: CommandDraft) => {
+    if (draft.type === "ir") {
+      setCommandEditSaveError(
+        "Infrared commands can only be learned via WebSocket right now."
+      );
+      return;
+    }
+    if (draft.type === "script") {
+      setCommandEditSaveError("Script commands are not supported yet.");
+      return;
+    }
+    setCommandEditSaveError(null);
+    try {
+      const payload = buildCommandPayload(draft);
+      const createResponse = await fetch("/commands/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!createResponse.ok) {
+        throw new Error(`Create failed (${createResponse.status})`);
+      }
 
-      <button className="fab" aria-label="Add device" onClick={addDevice}>
-        +
-      </button>
-    </section>
-  );
+      if (editingCommandId !== null) {
+        const deleteResponse = await fetch(`/commands/${editingCommandId}`, {
+          method: "DELETE",
+        });
+        if (!deleteResponse.ok) {
+          throw new Error(`Delete failed (${deleteResponse.status})`);
+        }
+      }
 
-  const renderSettingsRoot = () => (
-    <section className="page">
-      <PageHeader title="Settings" />
+      await fetchCommands();
+      setSettingsView("commands");
+      setEditingCommandId(null);
+    } catch (error) {
+      setCommandEditSaveError(toErrorMessage(error, "Save failed"));
+    }
+  };
 
-      <div className="list">
-        {settingsItems.map((item) => (
-          <ListRow
-            key={item.id}
-            clickable
-            onClick={() => {
-              if (item.id === "icons") {
-                setSettingsView("icons");
-              }
-            }}
-            leading={<div className="list-row__icon">{iconMap[item.icon]}</div>}
-            title={item.title}
-            actions={<span className="list-row__chevron">&gt;</span>}
-          />
-        ))}
-        <ListRow
-          className="list-row--stacked"
-          leading={<div className="list-row__icon">{iconMap.invert}</div>}
-          title="Invert Images in Dark Mode"
-          subtitle={
-            "Inverts all images for scenes and devices while in dark mode (works especially well for simple icons)."
+  const renderSettings = () =>
+    settingsView === "icons" ? (
+      <IconsPage
+        images={images}
+        loading={imagesLoading}
+        error={imagesError}
+        openMenuId={imageMenu.openId}
+        onToggleMenu={imageMenu.toggle}
+        onCloseMenu={imageMenu.close}
+        onRename={renameImage}
+        onDelete={deleteImage}
+        onUpload={uploadImage}
+        onBack={() => setSettingsView("root")}
+        imageInputRef={imageInputRef}
+      />
+    ) : settingsView === "commands" ? (
+      <CommandsPage
+        commands={commands}
+        loading={commandsLoading}
+        error={commandsError}
+        openMenuId={commandsMenu.openId}
+        onToggleMenu={commandsMenu.toggle}
+        onCloseMenu={commandsMenu.close}
+        onSend={sendCommand}
+        onDelete={deleteCommand}
+        onEdit={(commandId) => {
+          setCommandEdit(null);
+          setCommandEditLoadError(null);
+          setCommandEditSaveError(null);
+          setEditingCommandId(commandId);
+          setSettingsView("command-edit");
+        }}
+        onCreate={() => {
+          setCommandEdit(null);
+          setCommandEditLoadError(null);
+          setCommandEditSaveError(null);
+          setEditingCommandId(null);
+          setSettingsView("command-edit");
+        }}
+        onBack={() => setSettingsView("root")}
+      />
+    ) : settingsView === "command-edit" ? (
+      <CommandEditPage
+        title={editingCommandId === null ? "New Command" : "Edit Command"}
+        command={commandEdit}
+        devices={deviceOptions}
+        loading={commandEditLoading}
+        loadError={commandEditLoadError}
+        saveError={commandEditSaveError}
+        deviceError={deviceOptionsError}
+        onSave={saveEditedCommand}
+        onCancel={() => {
+          setSettingsView("commands");
+          setEditingCommandId(null);
+        }}
+      />
+    ) : (
+      <SettingsPage
+        items={settingsItems}
+        invertImages={invertImages}
+        darkMode={darkMode}
+        onToggleInvert={() => setInvertImages((prev) => !prev)}
+        onToggleDarkMode={() => setDarkMode((prev) => !prev)}
+        onSelectItem={(id) => {
+          if (id === "icons") {
+            setSettingsView("icons");
+            return;
           }
-          actions={
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={invertImages}
-                onChange={() => setInvertImages((prev) => !prev)}
-              />
-              <span className="switch__track" />
-            </label>
-          }
-        />
-        <ListRow
-          leading={<div className="list-row__icon">D</div>}
-          title="Dark Mode"
-          actions={
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={darkMode}
-                onChange={() => setDarkMode((prev) => !prev)}
-              />
-              <span className="switch__track" />
-            </label>
-          }
-        />
-      </div>
-    </section>
-  );
-
-  const renderIconsPage = () => (
-    <section className="page">
-      <PageHeader title="Icons" onBack={() => setSettingsView("root")} />
-
-      {imagesLoading ? (
-        <PageEmpty>Loading images...</PageEmpty>
-      ) : imagesError ? (
-        <PageEmpty>{imagesError}</PageEmpty>
-      ) : images.length === 0 ? (
-        <PageEmpty>No images yet.</PageEmpty>
-      ) : (
-        <div className="list list--menu">
-          {images.map((image) => (
-            <ListRow
-              key={image.id}
-              leading={
-                <div className="list-row__icon list-row__icon--image">
-                  <img
-                    src={`/images/${image.id}`}
-                    alt={image.filename}
-                    loading="lazy"
-                  />
-                </div>
-              }
-              title={image.filename}
-              subtitle={image.path}
-              actions={
-                <div className="menu-anchor">
-                  <IconButton
-                    aria-label="Image menu"
-                    aria-expanded={openImageMenuId === image.id}
-                    onClick={() =>
-                      setOpenImageMenuId((current) =>
-                        current === image.id ? null : image.id
-                      )
-                    }
-                  >
-                    <span>•••</span>
-                  </IconButton>
-                  {openImageMenuId === image.id && (
-                    <div className="menu">
-                      <button
-                        className="menu__item"
-                        onClick={async () => {
-                          const nextName = window.prompt(
-                            "New name",
-                            image.filename
-                          );
-                          if (!nextName) {
-                            setOpenImageMenuId(null);
-                            return;
-                          }
-                          try {
-                            await handleImageRename(image.id, nextName);
-                            setOpenImageMenuId(null);
-                            await fetchImages();
-                          } catch (error) {
-                            const message =
-                              error instanceof Error
-                                ? error.message
-                                : "Rename failed";
-                            setImagesError(message);
-                          }
-                        }}
-                      >
-                        Rename
-                      </button>
-                      <button
-                        className="menu__item menu__item--danger"
-                        onClick={async () => {
-                          try {
-                            await handleImageDelete(image.id);
-                            setOpenImageMenuId(null);
-                            await fetchImages();
-                          } catch (error) {
-                            const message =
-                              error instanceof Error
-                                ? error.message
-                                : "Delete failed";
-                            setImagesError(message);
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              }
-            />
-          ))}
-        </div>
-      )}
-
-      <input
-        ref={imageInputRef}
-        className="file-input"
-        type="file"
-        accept="image/*"
-        onChange={async (event) => {
-          const file = event.target.files?.[0];
-          if (!file) return;
-          try {
-            await handleImageUpload(file);
-            await fetchImages();
-          } catch (error) {
-            const message =
-              error instanceof Error ? error.message : "Upload failed";
-            setImagesError(message);
-          } finally {
-            event.target.value = "";
+          if (id === "commands") {
+            setSettingsView("commands");
           }
         }}
       />
-
-      <button
-        className="fab"
-        aria-label="Add icon"
-        onClick={() => imageInputRef.current?.click()}
-      >
-        +
-      </button>
-    </section>
-  );
-
-  const renderSettings = () =>
-    settingsView === "icons" ? renderIconsPage() : renderSettingsRoot();
+    );
 
   useEffect(() => {
     if (settingsView === "icons") {
       fetchImages();
     }
-  }, [settingsView]);
+    if (settingsView === "commands") {
+      fetchCommands();
+    }
+    if (settingsView === "command-edit") {
+      if (editingCommandId !== null) {
+        fetchCommandDetail(editingCommandId);
+      }
+      fetchDeviceOptions();
+    }
+  }, [settingsView, editingCommandId]);
 
   return (
     <div className={`app ${darkMode ? "app--dark" : "app--light"}`}>
       <div className="app__glow" aria-hidden="true" />
       <main className="app__frame">
         {!connected ? (
-          <section className="connect">
-            <div className="connect__badge">Equilibrium Hub</div>
-            <h1 className="connect__title">Connect to your hub</h1>
-            <p className="connect__subtitle">
-              Enter the URL of your hub to continue.
-            </p>
-            <label className="field">
-              <span>Hub URL</span>
-              <input
-                value={hubUrl}
-                onChange={(event) => setHubUrl(event.target.value)}
-                placeholder="192.168.0.123:8000"
-              />
-            </label>
-            <Button variant="primary" onClick={handleConnect}>
-              Connect
-            </Button>
-            <div className="connect__hint">
-              Make sure your Equilibrium hub is online and reachable from this
-              device.
-            </div>
-          </section>
+          <ConnectPage
+            hubUrl={hubUrl}
+            onHubUrlChange={setHubUrl}
+            onConnect={handleConnect}
+          />
         ) : activeTab === "scenes" ? (
-          renderScenes()
+          <ScenesPage
+            scenes={scenes}
+            activeScene={activeScene}
+            onAddScene={addScene}
+            onToggleScene={toggleScene}
+          />
         ) : activeTab === "devices" ? (
-          renderDevices()
+          <DevicesPage devices={devices} onAddDevice={addDevice} />
         ) : (
           renderSettings()
         )}
