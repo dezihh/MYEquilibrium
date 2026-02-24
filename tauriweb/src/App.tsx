@@ -1,0 +1,49 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import ScenesPage from './pages/ScenesPage';
+import SceneDetailPage from './pages/SceneDetailPage';
+import CreateScenePage from './pages/CreateScenePage';
+import DevicesPage from './pages/DevicesPage';
+import DeviceDetailPage from './pages/DeviceDetailPage';
+import CreateDevicePage from './pages/CreateDevicePage';
+import SettingsPage from './pages/SettingsPage';
+import CommandListPage from './pages/CommandListPage';
+import CreateCommandPage from './pages/CreateCommandPage';
+import MacroListPage from './pages/MacroListPage';
+import CreateMacroPage from './pages/CreateMacroPage';
+import BluetoothDevicesPage from './pages/BluetoothDevicesPage';
+import ImageListPage from './pages/ImageListPage';
+import ConnectPage from './pages/ConnectPage';
+import { AppProvider } from './context/AppContext';
+
+function App() {
+  return (
+    <AppProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/scenes" replace />} />
+          <Route path="/connect" element={<ConnectPage />} />
+          <Route element={<Layout />}>
+            <Route path="/scenes" element={<ScenesPage />} />
+            <Route path="/scenes/create" element={<CreateScenePage />} />
+            <Route path="/scenes/edit/:id" element={<CreateScenePage />} />
+            <Route path="/scenes/:id" element={<SceneDetailPage />} />
+            <Route path="/devices" element={<DevicesPage />} />
+            <Route path="/devices/create" element={<CreateDevicePage />} />
+            <Route path="/devices/edit/:id" element={<CreateDevicePage />} />
+            <Route path="/devices/:id" element={<DeviceDetailPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/settings/commands" element={<CommandListPage />} />
+            <Route path="/settings/commands/create" element={<CreateCommandPage />} />
+            <Route path="/settings/macros" element={<MacroListPage />} />
+            <Route path="/settings/macros/create" element={<CreateMacroPage />} />
+            <Route path="/settings/bluetooth" element={<BluetoothDevicesPage />} />
+            <Route path="/settings/images" element={<ImageListPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppProvider>
+  );
+}
+
+export default App;
