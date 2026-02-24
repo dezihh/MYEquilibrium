@@ -14,7 +14,7 @@ function getBaseUrl(): string {
   if (isTauri()) {
     return localStorage.getItem('hubUrl') || 'http://localhost:8000';
   }
-  return window.location.origin;
+  return import.meta.env.VITE_API_BASE || window.location.origin;
 }
 
 class ApiClient {

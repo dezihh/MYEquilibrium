@@ -1,6 +1,6 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from starlette.responses import RedirectResponse
 
 from Api.lifespan import lifespan, lifespan_dev
 from Api.models.ServerInfo import ServerInfo
@@ -13,6 +13,17 @@ def app_generator(dev: bool = False):
     else:
         app = FastAPI(lifespan=lifespan)
 
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:1420",
+            "http://127.0.0.1:1420",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     app.mount("/ui", StaticFiles(directory="web", html=True), name="ui")
     app.include_router(commands.router)
     app.include_router(devices.router)
@@ -24,8 +35,8 @@ def app_generator(dev: bool = False):
     app.include_router(system.router)
 
     @app.get("/", include_in_schema=False)
-    def redirect():
-        return RedirectResponse("/ui")
+    def root_info():
+        return ServerInfo()
 
     @app.get("/info", tags=["Info"], response_model=ServerInfo)
     def app_info():
