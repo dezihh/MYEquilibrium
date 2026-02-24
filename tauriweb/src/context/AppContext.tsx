@@ -26,7 +26,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const isTauri = detectTauri();
   const [hubUrl, setHubUrlState] = useState<string>(() => {
     if (isTauri) return localStorage.getItem('hubUrl') || '';
-    return window.location.origin;
+    return import.meta.env.VITE_API_BASE || window.location.origin;
   });
   const [isConnected, setIsConnected] = useState(false);
   const [currentScene, setCurrentScene] = useState<number | null>(null);
