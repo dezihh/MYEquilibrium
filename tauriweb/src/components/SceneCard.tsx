@@ -61,7 +61,7 @@ export default function SceneCard({ scene, isActive, onRefresh, onSceneStart, on
           <button className="btn btn-ghost btn-sm btn-icon" onClick={handleDelete}>🗑️</button>
         </div>
       </div>
-      <div className="card-subtitle">{scene.devices.length} Gerät(e)</div>
+      <div className="card-subtitle">{Array.isArray(scene.device_ids) ? scene.device_ids.length : 0} Gerät(e)</div>
       <div className="btn-group" style={{ marginTop: 12 }}>
         {!isActive ? (
           <button className="btn btn-primary btn-sm" onClick={handleStart} disabled={loading}>▶ Starten</button>

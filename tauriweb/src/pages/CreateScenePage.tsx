@@ -12,9 +12,10 @@ export default function CreateScenePage() {
   const { data: macros } = useApi(() => apiClient.getMacros(), []);
 
   const [name, setName] = useState('');
-  const [selectedDevices, setSelectedDevices] = useState<number[]>([]);
-  const [startMacro, setStartMacro] = useState<number | null>(null);
-  const [stopMacro, setStopMacro] = useState<number | null>(null);
+  const [deviceIds, setDeviceIds] = useState<number[]>([]);
+  const [startMacroId, setStartMacroId] = useState<number | null>(null);
+  const [stopMacroId, setStopMacroId] = useState<number | null>(null);
+  const [bluetoothAddress, setBluetoothAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,16 +25,26 @@ export default function CreateScenePage() {
         const scene = scenes.find(s => s.id === Number(id));
         if (scene) {
           setName(scene.name);
-          setSelectedDevices(scene.devices);
-          setStartMacro(scene.startMacro);
-          setStopMacro(scene.stopMacro);
+          const sceneWithLegacy = scene as typeof scene & {
+            devices?: number[];
+            startMacro?: number | null;
+            stopMacro?: number | null;
+          };
+          const safeDeviceIds = Array.isArray(scene.device_ids)
+            ? scene.device_ids
+            : (Array.isArray(sceneWithLegacy.devices) ? sceneWithLegacy.devices : []);
+
+          setDeviceIds(safeDeviceIds);
+          setStartMacroId(scene.start_macro_id ?? sceneWithLegacy.startMacro ?? null);
+          setStopMacroId(scene.stop_macro_id ?? sceneWithLegacy.stopMacro ?? null);
+          setBluetoothAddress(scene.bluetooth_address ?? '');
         }
       });
     }
   }, [id, isEdit]);
 
   const toggleDevice = (deviceId: number) => {
-    setSelectedDevices(prev =>
+    setDeviceIds(prev =>
       prev.includes(deviceId) ? prev.filter(d => d !== deviceId) : [...prev, deviceId]
     );
   };
@@ -44,7 +55,13 @@ export default function CreateScenePage() {
     setLoading(true);
     setError(null);
     try {
-      const data = { name, devices: selectedDevices, startMacro, stopMacro };
+      const data = {
+        name,
+        device_ids: deviceIds,
+        start_macro_id: startMacroId,
+        stop_macro_id: stopMacroId,
+        bluetooth_address: bluetoothAddress || null,
+      };
       if (isEdit) {
         await apiClient.updateScene(Number(id), data);
       } else {
@@ -72,14 +89,14 @@ export default function CreateScenePage() {
           {devices?.map(device => (
             <div key={device.id} className="list-item" style={{ cursor: 'pointer', marginBottom: 4 }} onClick={() => toggleDevice(device.id)}>
               <span>{device.name}</span>
-              <input type="checkbox" readOnly checked={selectedDevices.includes(device.id)} />
+              <input type="checkbox" readOnly checked={(deviceIds ?? []).includes(device.id)} />
             </div>
           ))}
         </div>
 
         <div className="form-group">
           <label className="form-label">Start-Makro</label>
-          <select className="form-control" value={startMacro ?? ''} onChange={e => setStartMacro(e.target.value ? Number(e.target.value) : null)}>
+          <select className="form-control" value={startMacroId ?? ''} onChange={e => setStartMacroId(e.target.value ? Number(e.target.value) : null)}>
             <option value="">Keins</option>
             {macros?.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
@@ -87,10 +104,15 @@ export default function CreateScenePage() {
 
         <div className="form-group">
           <label className="form-label">Stop-Makro</label>
-          <select className="form-control" value={stopMacro ?? ''} onChange={e => setStopMacro(e.target.value ? Number(e.target.value) : null)}>
+          <select className="form-control" value={stopMacroId ?? ''} onChange={e => setStopMacroId(e.target.value ? Number(e.target.value) : null)}>
             <option value="">Keins</option>
             {macros?.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Bluetooth-Adresse (optional)</label>
+          <input className="form-control" value={bluetoothAddress} onChange={e => setBluetoothAddress(e.target.value)} placeholder="XX:XX:XX:XX:XX:XX" />
         </div>
 
         <div className="form-actions">

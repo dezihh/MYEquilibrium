@@ -150,6 +150,9 @@ class ApiClient {
   async getStatus(): Promise<StatusReport> {
     return this.request<StatusReport>('/system/status');
   }
+  async getHaLights(): Promise<string[]> {
+    return this.request<string[]>('/system/ha/lights');
+  }
   async getInfo(): Promise<unknown> {
     return this.request<unknown>('/info');
   }

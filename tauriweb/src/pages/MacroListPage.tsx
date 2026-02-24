@@ -43,7 +43,7 @@ export default function MacroListPage() {
         <div key={macro.id} className="list-item">
           <div>
             <div style={{ fontWeight: 600 }}>{macro.name}</div>
-            <div className="card-subtitle">{macro.steps.length} Schritt(e)</div>
+            <div className="card-subtitle">{macro.command_ids.length} Schritt(e)</div>
           </div>
           <div className="btn-group">
             <button className="btn btn-primary btn-sm" onClick={() => handleExecute(macro.id)} disabled={executing === macro.id}>

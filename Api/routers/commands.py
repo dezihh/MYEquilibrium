@@ -27,8 +27,16 @@ def create_command(command: CommandBase, session: SessionDep) -> CommandWithRela
         raise HTTPException(status_code=400, detail="Bluetooth commands require either an action or a media action.")
     elif db_command.type == CommandType.INTEGRATION and not db_command.integration_action:
         raise HTTPException(status_code=400, detail="Integration commands require an integration action.")
-    elif db_command.integration_action == IntegrationAction.TOGGLE_LIGHT and not db_command.integration_entity:
-        raise HTTPException(status_code=400, detail="A toggle_light command requires an entity.")
+    elif db_command.integration_action in [
+        IntegrationAction.TOGGLE_LIGHT,
+        IntegrationAction.TURN_ON,
+        IntegrationAction.TURN_OFF,
+        IntegrationAction.BRIGHTNESS_UP,
+        IntegrationAction.BRIGHTNESS_DOWN,
+    ] and not db_command.integration_entity:
+        raise HTTPException(status_code=400, detail="This integration action requires an entity.")
+    elif db_command.integration_action == IntegrationAction.CALL_SERVICE and not db_command.integration_entity:
+        raise HTTPException(status_code=400, detail="call_service requires integration_entity in format 'domain.service'.")
 
     if command.device_id is not None:
         db_device = session.get(Device, command.device_id)

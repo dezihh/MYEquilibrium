@@ -8,6 +8,7 @@ const pageTitles: Record<string, string> = {
   '/settings/commands': 'Befehle',
   '/settings/macros': 'Makros',
   '/settings/bluetooth': 'Bluetooth',
+  '/settings/integrations': 'Integrationen',
   '/settings/images': 'Bilder',
 };
 

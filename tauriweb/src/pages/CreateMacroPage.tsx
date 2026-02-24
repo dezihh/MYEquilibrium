@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import apiClient from '../api/apiClient';
 import { useApi } from '../hooks/useApi';
-import { MacroStep } from '../models/macro';
+import { Command } from '../models/command';
+
+interface MacroEntry { commandId: number; delay: number; }
 
 export default function CreateMacroPage() {
   const navigate = useNavigate();
@@ -12,9 +14,11 @@ export default function CreateMacroPage() {
   const { data: devices } = useApi(() => apiClient.getDevices(), []);
 
   const [name, setName] = useState('');
-  const [steps, setSteps] = useState<MacroStep[]>([]);
+  const [entries, setEntries] = useState<MacroEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const allCommands: Command[] = devices?.flatMap(d => d.commands) ?? [];
 
   useEffect(() => {
     if (editId) {
@@ -22,27 +26,31 @@ export default function CreateMacroPage() {
         const macro = macros.find(m => m.id === Number(editId));
         if (macro) {
           setName(macro.name);
-          setSteps(macro.steps);
+          const newEntries: MacroEntry[] = macro.command_ids.map((cid, i) => ({
+            commandId: cid,
+            delay: macro.delays[i] ?? 500,
+          }));
+          setEntries(newEntries);
         }
       });
     }
   }, [editId]);
 
-  const addStep = () => {
-    const firstDevice = devices?.[0];
-    if (!firstDevice) return;
-    const firstCommand = firstDevice.commands[0];
-    if (!firstCommand) return;
-    setSteps(prev => [...prev, { deviceId: firstDevice.id, commandId: firstCommand.id, delay: 500 }]);
+  const addEntry = () => {
+    if (allCommands.length === 0) return;
+    setEntries(prev => [...prev, { commandId: allCommands[0].id, delay: 500 }]);
   };
 
-  const removeStep = (index: number) => setSteps(prev => prev.filter((_, i) => i !== index));
+  const removeEntry = (index: number) => setEntries(prev => prev.filter((_, i) => i !== index));
 
-  const updateStep = (index: number, field: keyof MacroStep, value: number) => {
-    setSteps(prev => prev.map((s, i) => i === index ? { ...s, [field]: value } : s));
+  const updateEntry = (index: number, field: keyof MacroEntry, value: number) => {
+    setEntries(prev => prev.map((e, i) => i === index ? { ...e, [field]: value } : e));
   };
 
-  const getDeviceCommands = (deviceId: number) => devices?.find(d => d.id === deviceId)?.commands || [];
+  const getCommandLabel = (cmd: Command) => {
+    const device = devices?.find(d => d.commands.some(c => c.id === cmd.id));
+    return device ? `${device.name} → ${cmd.name}` : cmd.name;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +58,12 @@ export default function CreateMacroPage() {
     setLoading(true);
     setError(null);
     try {
+      const command_ids = entries.map(e => e.commandId);
+      const delays = entries.map(e => e.delay);
       if (editId) {
-        await apiClient.updateMacro(Number(editId), { name, steps });
+        await apiClient.updateMacro(Number(editId), { name, command_ids, delays });
       } else {
-        await apiClient.createMacro({ name, steps });
+        await apiClient.createMacro({ name, command_ids, delays });
       }
       navigate('/settings/macros');
     } catch (e) {
@@ -73,42 +83,29 @@ export default function CreateMacroPage() {
         </div>
 
         <div className="form-group">
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <label className="form-label">Schritte</label>
-            <button type="button" className="btn btn-secondary btn-sm" onClick={addStep}>+ Schritt</button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <label className="form-label" style={{ marginBottom: 0 }}>Schritte</label>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={addEntry} disabled={allCommands.length === 0}>
+              + Schritt
+            </button>
           </div>
-          {steps.length === 0 && <div className="card-subtitle">Keine Schritte. Füge Schritte hinzu.</div>}
-          {steps.map((step, index) => (
+          {entries.length === 0 && <div className="card-subtitle">Keine Schritte vorhanden.</div>}
+          {entries.map((entry, index) => (
             <div key={index} className="card" style={{ marginBottom: 8 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
-                <div>
-                  <label className="form-label">Gerät</label>
-                  <select className="form-control" value={step.deviceId}
-                    onChange={e => {
-                      const dId = Number(e.target.value);
-                      const cmds = devices?.find(d => d.id === dId)?.commands || [];
-                      updateStep(index, 'deviceId', dId);
-                      if (cmds.length > 0) updateStep(index, 'commandId', cmds[0].id);
-                    }}>
-                    {devices?.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Befehl</label>
-                  <select className="form-control" value={step.commandId}
-                    onChange={e => updateStep(index, 'commandId', Number(e.target.value))}>
-                    {getDeviceCommands(step.deviceId).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <span className="card-subtitle" style={{ minWidth: 24 }}>{index + 1}.</span>
+                <select className="form-control" value={entry.commandId}
+                  onChange={e => updateEntry(index, 'commandId', Number(e.target.value))} style={{ flex: 1 }}>
+                  {allCommands.map(c => (
+                    <option key={c.id} value={c.id}>{getCommandLabel(c)}</option>
+                  ))}
+                </select>
+                <button type="button" className="btn btn-danger btn-sm btn-icon" onClick={() => removeEntry(index)}>🗑️</button>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ flex: 1 }}>
-                  <label className="form-label">Verzögerung (ms)</label>
-                  <input type="number" className="form-control" value={step.delay}
-                    onChange={e => updateStep(index, 'delay', Number(e.target.value))} min={0} />
-                </div>
-                <button type="button" className="btn btn-danger btn-sm" style={{ marginTop: 20 }}
-                  onClick={() => removeStep(index)}>🗑️</button>
+                <label className="form-label" style={{ marginBottom: 0, minWidth: 130 }}>Verzögerung (ms)</label>
+                <input type="number" className="form-control" value={entry.delay}
+                  onChange={e => updateEntry(index, 'delay', Number(e.target.value))} min={0} style={{ width: 100 }} />
               </div>
             </div>
           ))}
@@ -122,3 +119,5 @@ export default function CreateMacroPage() {
     </div>
   );
 }
+
+

@@ -11,6 +11,7 @@ const typeLabels: Record<string, string> = {
   display: 'Display',
   amplifier: 'Verstärker',
   player: 'Player',
+  integration: 'Integration',
   other: 'Sonstiges',
 };
 

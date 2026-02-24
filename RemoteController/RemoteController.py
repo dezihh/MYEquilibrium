@@ -90,7 +90,7 @@ class RemoteController:
 
     status_callback: AsyncJsonCallback|None = None
 
-    cached_commands: {int:Command} = None
+    cached_commands: dict[int, Command] = {}
 
     @classmethod
     async def create(cls, rf_addresses: list[bytes], ha_url: str|None = None, ha_token: str|None = None):
@@ -111,6 +111,7 @@ class RemoteController:
         self.ir_manager = IrManager()
 
         self.queue = AsyncQueueManager()
+        self.cached_commands = {}
 
         if ha_url is not None and ha_token is not None:
             self.ha_manager = HaManager(ha_url, ha_token)
@@ -139,6 +140,7 @@ class RemoteController:
         self.logger.info("Dev mode: IR and RF hardware are disabled")
 
         self.queue = AsyncQueueManager()
+        self.cached_commands = {}
 
         if ha_url is not None and ha_token is not None:
             self.ha_manager = HaManager(ha_url, ha_token)
@@ -237,6 +239,9 @@ class RemoteController:
 
 
     async def send_command(self, command_id: int, press_without_release = False, from_start: bool = False, from_stop: bool = False):
+        if self.cached_commands is None:
+            self.cached_commands = {}
+
         command_db = self.cached_commands.get(command_id)
 
         if command_db:
@@ -367,11 +372,24 @@ class RemoteController:
 
         match command.integration_action:
             case IntegrationAction.TOGGLE_LIGHT:
-                self.ha_manager.toggle_light(command.integration_entity)
+                self.ha_manager.toggle_entity(command.integration_entity)
+            case IntegrationAction.TURN_ON:
+                self.ha_manager.turn_on_entity(command.integration_entity)
+            case IntegrationAction.TURN_OFF:
+                self.ha_manager.turn_off_entity(command.integration_entity)
             case IntegrationAction.BRIGHTNESS_UP:
-                self.ha_manager.increase_brightness()
+                self.ha_manager.increase_brightness(command.integration_entity)
             case IntegrationAction.BRIGHTNESS_DOWN:
-                self.ha_manager.decrease_brightness()
+                self.ha_manager.decrease_brightness(command.integration_entity)
+            case IntegrationAction.CALL_SERVICE:
+                payload = None
+                if command.body:
+                    try:
+                        payload = json.loads(command.body)
+                    except json.JSONDecodeError:
+                        self.logger.error(f"Invalid JSON body for call_service command {command.id}: {command.body}")
+                        return
+                self.ha_manager.call_service(command.integration_entity, payload)
 
     async def start_scene(self, scene_id: int):
 

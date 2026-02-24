@@ -35,6 +35,7 @@ export default function SettingsPage() {
     { path: '/settings/commands', label: 'Befehle', icon: '🎮', desc: 'IR-Befehle verwalten' },
     { path: '/settings/macros', label: 'Makros', icon: '⚡', desc: 'Befehlssequenzen erstellen' },
     { path: '/settings/bluetooth', label: 'Bluetooth', icon: '🔵', desc: 'BLE-Geräte verwalten' },
+    { path: '/settings/integrations', label: 'Integrationen', icon: '🔗', desc: 'Integrationsbefehle ausführen' },
     { path: '/settings/images', label: 'Bilder', icon: '🖼️', desc: 'Szenenbilder verwalten' },
   ];
 

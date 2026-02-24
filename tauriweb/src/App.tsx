@@ -13,6 +13,7 @@ import MacroListPage from './pages/MacroListPage';
 import CreateMacroPage from './pages/CreateMacroPage';
 import BluetoothDevicesPage from './pages/BluetoothDevicesPage';
 import ImageListPage from './pages/ImageListPage';
+import IntegrationsPage from './pages/IntegrationsPage';
 import ConnectPage from './pages/ConnectPage';
 import { AppProvider } from './context/AppContext';
 
@@ -38,6 +39,7 @@ function App() {
             <Route path="/settings/macros" element={<MacroListPage />} />
             <Route path="/settings/macros/create" element={<CreateMacroPage />} />
             <Route path="/settings/bluetooth" element={<BluetoothDevicesPage />} />
+            <Route path="/settings/integrations" element={<IntegrationsPage />} />
             <Route path="/settings/images" element={<ImageListPage />} />
           </Route>
         </Routes>

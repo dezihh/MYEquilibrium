@@ -8,7 +8,7 @@ export default function CommandListPage() {
   const { data: devices } = useApi(() => apiClient.getDevices(), []);
   const navigate = useNavigate();
 
-  const getDeviceName = (id: number) => devices?.find(d => d.id === id)?.name || `Gerät ${id}`;
+  const getDeviceName = (id: number) => id === 0 ? 'Ohne Gerät' : devices?.find(d => d.id === id)?.name || `Gerät ${id}`;
 
   const handleDelete = async (cmdId: number, name: string) => {
     if (!confirm(`Befehl "${name}" wirklich löschen?`)) return;
@@ -28,8 +28,9 @@ export default function CommandListPage() {
   if (error) return <div className="error-container">Fehler: {error}</div>;
 
   const grouped = (commands || []).reduce<Record<number, Command[]>>((acc, cmd) => {
-    if (!acc[cmd.deviceId]) acc[cmd.deviceId] = [];
-    acc[cmd.deviceId].push(cmd);
+    const key = cmd.device_id ?? 0;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(cmd);
     return acc;
   }, {});
 

@@ -22,7 +22,7 @@ If you run into any issues, check the [Troubleshooting](#troubleshooting) sectio
 
 ### Todo
 - [ ] Expand support for physical remotes
-- [ ] Home Assistant integration
+- [x] Home Assistant integration (WIP: core actions + generic service calls)
 - [ ] Philips Hue integration?
 - [ ] Amazon Alexa integration?
 - [ ] Improve set up guide
@@ -109,6 +109,7 @@ Router: [Api/routers/images.py](Api/routers/images.py)
 ### System
 Router: [Api/routers/system.py](Api/routers/system.py)
 - GET `/system/status` – Statusreport
+- GET `/system/ha/lights` – Home-Assistant Licht-Entities (für UI-Auswahl)
 
 ### WebSockets
 Router: [Api/routers/websockets.py](Api/routers/websockets.py)
@@ -135,6 +136,25 @@ Router: [Api/routers/websockets.py](Api/routers/websockets.py)
 **Zentrale Orchestrierung:** [RemoteController/RemoteController.py](RemoteController/RemoteController.py)
 - Erzeugt/verwaltet: BleKeyboard, IrManager, RfManager, HaManager, AsyncQueueManager
 - Exponiert API-Funktionen für alle Router
+
+## Home-Assistant Integration (aktueller Stand)
+
+**Konfiguration**
+- Datei: [config/ha_credentials.json](config/ha_credentials.json)
+- Felder: `url`, `token`
+- Die URL wird intern auf `/api` normalisiert (falls nicht vorhanden)
+
+**Unterstützte Integrationsaktionen**
+- `toggle_light`
+- `turn_on`
+- `turn_off`
+- `brightness_up`
+- `brightness_down`
+- `call_service` (generisch, Format `domain.service`, optional mit JSON-Daten)
+
+**Technische Hinweise**
+- Service-Aufrufe erfolgen direkt über Home-Assistant REST (`/api/services/...`) statt über Domain-Parsing aus Drittbibliotheken.
+- Damit wird ein bekannter Parsing-Fehler bei erweiterten Service-Metadaten in neueren HA-Versionen umgangen.
 
 ## Alte/Alternative Komponenten
 
