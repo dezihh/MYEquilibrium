@@ -52,7 +52,7 @@ Die Funktionen sind sauber nach Domänen getrennt. Die Kernlogik liegt in eigene
 - [main.py](main.py) – Uvicorn Start mit Flags
 
 **UI (späterer Fokus)**
-- [web/](web/) – Flutter Web UI (aktuell nicht im Fokus)
+- [web/](web/) – Tauri Webapp Build UI (aktuell nicht im Fokus)
 
 ## API-Übersicht (FastAPI)
 
