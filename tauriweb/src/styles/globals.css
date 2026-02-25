@@ -193,6 +193,18 @@ body {
   color: var(--primary);
 }
 
+/* Filter-Dropdown (z.B. Gerätefilter in Befehlsliste) */
+.filter-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  cursor: pointer;
+  max-width: 140px;
+}
+
 /* Cards */
 .card {
   background-color: var(--bg-card);

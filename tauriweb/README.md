@@ -8,11 +8,10 @@ Equilibrium ist eine Smart-Home-Steuerungsanwendung, die als **Tauri v2 Desktop-
 
 - **Szenen**: Erstelle und verwalte Szenen, die mehrere Geräte und Makros zusammenfassen
 - **Geräte**: Verwalte Geräte inkl. Typ `integration`, Hersteller, Modell und Bluetooth-Adresse
-- **Befehle**: Definiere Befehle vom Typ **IR**, **Bluetooth**, **Network** oder **Integration**
+- **Befehle**: Definiere Befehle vom Typ **IR**, **Bluetooth**, **Network** oder **Integration**; filterbar nach Gerät
 - **Makros**: Erstelle Befehlssequenzen über `command_ids` + `delays`
 - **Bluetooth**: Verwalte BLE-Geräte (Pairing, Verbindung, Trennung)
 - **Bilder**: Lade Szenenbilder hoch und verwalte sie
-- **Integrationen**: Eigene Integrationsseite mit Ausführen/Löschen/Erstellen von Integrationsbefehlen
 - **Common Controls**: Fernbedienungs-UI (Navigation, Volume, Channel, Transport, Input, Colored Buttons, Integration)
 - **Home Assistant**: Entity-Auswahl, Actions `toggle_light`, `turn_on`, `turn_off`, `brightness_up`, `brightness_down` und `call_service`
 
@@ -171,7 +170,7 @@ tauriweb/
 │   │   └── statusReport.ts     # Status-Interface
 │   ├── pages/
 │   │   ├── BluetoothDevicesPage.tsx
-│   │   ├── CommandListPage.tsx
+│   │   ├── CommandListPage.tsx    # Befehlsliste mit Geräte-Filter
 │   │   ├── ConnectPage.tsx
 │   │   ├── CreateCommandPage.tsx
 │   │   ├── CreateDevicePage.tsx
@@ -180,7 +179,6 @@ tauriweb/
 │   │   ├── DeviceDetailPage.tsx
 │   │   ├── DevicesPage.tsx
 │   │   ├── ImageListPage.tsx
-│   │   ├── IntegrationsPage.tsx
 │   │   ├── MacroListPage.tsx
 │   │   ├── SceneDetailPage.tsx
 │   │   ├── ScenesPage.tsx
@@ -214,13 +212,13 @@ tauriweb/
 
 ## Integrations-Workflow
 
-1. In **Einstellungen → Integrationen** wechseln
-2. Über **+ Neu** einen Integrationsbefehl erstellen
+1. In **Einstellungen → Befehle** wechseln
+2. Über **+ Neu** einen neuen Befehl erstellen
 3. Typ `integration` wählen, Aktion setzen (`toggle_light`, `turn_on`, `turn_off`, `brightness_up`, `brightness_down`, `call_service`)
 4. Für Entity-basierte Aktionen `integration_entity` setzen (z. B. `light.ceiling_lamp`)
 5. Für `call_service` statt Entity den Service im Format `domain.service` angeben (z. B. `scene.turn_on`)
 6. Optional JSON-Daten setzen, z. B. `{"entity_id": "scene.evening"}`
-7. Befehl kann auf der Integrationsseite und in Device/Scene-Controls direkt ausgeführt werden
+7. Befehl lässt sich direkt per ▶ in der Befehlsliste ausführen oder in Device/Scene-Controls einbinden
 
 ## Hinweise zur HA-Anbindung
 
