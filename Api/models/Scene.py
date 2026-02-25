@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Optional
 
+from pydantic import model_validator
 from sqlmodel import SQLModel, Field, Relationship
 
 from Api.models.UserImage import UserImage
@@ -50,19 +51,37 @@ class Scene(SceneBase, table=True):
 class SceneWithRelationships(SceneBase):
     id: int | None
     devices: list["Device"] = []
+    device_ids: list[int] = []
     image: UserImage | None = None
+    start_macro_id: int | None = None
+    stop_macro_id: int | None = None
     start_macro: Optional[MacroWithCommands] = None
     stop_macro: Optional[MacroWithCommands] = None
     macros: list[MacroWithCommands] = []
     bluetooth_address: str | None = None
     keymap: str | None = None
 
+    @model_validator(mode='after')
+    def fill_device_ids(self) -> 'SceneWithRelationships':
+        if not self.device_ids and self.devices:
+            self.device_ids = [d.id for d in self.devices if d.id is not None]
+        return self
+
 class SceneWithRelationshipsAndFullDevices(SceneBase):
     id: int | None
     devices: list["DeviceWithRelationships"] = []
+    device_ids: list[int] = []
     image: UserImage | None = None
+    start_macro_id: int | None = None
+    stop_macro_id: int | None = None
     start_macro: Optional[MacroWithCommands] = None
     stop_macro: Optional[MacroWithCommands] = None
     macros: list[MacroWithCommands] = []
     bluetooth_address: str | None = None
     keymap: str | None = None
+
+    @model_validator(mode='after')
+    def fill_device_ids(self) -> 'SceneWithRelationshipsAndFullDevices':
+        if not self.device_ids and self.devices:
+            self.device_ids = [d.id for d in self.devices if d.id is not None]
+        return self

@@ -519,13 +519,21 @@ class RemoteController:
 
     def load_key_map(self, keymap_name: str = "default"):
 
-        with open("config/keymap_scenes.json", "r") as file:
-            keymap_scene_data = file.read()
-            self.keymap_scene = json.loads(keymap_scene_data)
+        try:
+            with open("config/keymap_scenes.json", "r") as file:
+                keymap_scene_data = file.read()
+                self.keymap_scene = json.loads(keymap_scene_data)
+        except FileNotFoundError:
+            self.logger.warning('"config/keymap_scenes.json" not found, using empty scene keymap.')
+            self.keymap_scene = {}
 
-        with open(f"config/keymap_{keymap_name}.json") as file:
-            keymap_data = file.read()
-            self.keymap = json.loads(keymap_data)
+        try:
+            with open(f"config/keymap_{keymap_name}.json") as file:
+                keymap_data = file.read()
+                self.keymap = json.loads(keymap_data)
+        except FileNotFoundError:
+            self.logger.warning(f'"config/keymap_{keymap_name}.json" not found, using empty keymap.')
+            self.keymap = {}
 
         self.cached_commands = {}
         for command_id in self.keymap.values():

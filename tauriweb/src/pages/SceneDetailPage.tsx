@@ -42,8 +42,11 @@ export default function SceneDetailPage() {
     catch (e) { alert(`Fehler: ${e}`); }
   };
 
-  const getMacroName = (macroId: number | null) =>
-    macroId ? macros?.find(m => m.id === macroId)?.name ?? `Makro ${macroId}` : 'Keins';
+  const getMacroName = (macroId: number | null, macroObj?: { name: string } | null) => {
+    if (macroObj) return macroObj.name;
+    if (macroId) return macros?.find(m => m.id === macroId)?.name ?? `Makro ${macroId}`;
+    return 'Keins';
+  };
 
   return (
     <div>
@@ -67,12 +70,12 @@ export default function SceneDetailPage() {
 
         <div style={{ marginBottom: 8 }}>
           <div className="form-label">Start-Makro</div>
-          <span className="badge badge-primary">{getMacroName(scene.start_macro_id)}</span>
+          <span className="badge badge-primary">{getMacroName(scene.start_macro_id, scene.start_macro)}</span>
         </div>
 
         <div style={{ marginBottom: 16 }}>
           <div className="form-label">Stop-Makro</div>
-          <span className="badge badge-primary">{getMacroName(scene.stop_macro_id)}</span>
+          <span className="badge badge-primary">{getMacroName(scene.stop_macro_id, scene.stop_macro)}</span>
         </div>
 
         <div className="btn-group">

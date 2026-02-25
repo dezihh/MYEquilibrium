@@ -1,3 +1,8 @@
+export interface SceneMacroRef {
+  id: number;
+  name: string;
+}
+
 export interface Scene {
   id: number;
   name: string;
@@ -5,6 +10,8 @@ export interface Scene {
   device_ids: number[];
   start_macro_id: number | null;
   stop_macro_id: number | null;
+  start_macro?: SceneMacroRef | null;
+  stop_macro?: SceneMacroRef | null;
   bluetooth_address: string | null;
 }
 
