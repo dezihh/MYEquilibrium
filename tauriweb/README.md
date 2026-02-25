@@ -86,6 +86,29 @@ Das fertige Installationspaket befindet sich unter `src-tauri/target/release/bun
 Hinweise:
 - Für Browser-Dev mit separatem Host/Port muss CORS im Backend aktiv sein (z. B. `http://localhost:1420`).
 - `BrowserRouter` nutzt `basename={import.meta.env.BASE_URL}` für korrektes Routing unter `/ui/`.
+- **SPA Deep-Links**: Der FastAPI-Server nutzt `SPAStaticFiles` als Static-Mount, der bei 404 auf `index.html` zurückfällt. Dadurch funktionieren Browser-Reloads auf Unterseiten wie `/ui/scenes` ohne `Not Found`-Fehler.
+
+## Flutter-Frontend (`/gui/`)
+
+Neben der React-App wird die Flutter-Webapp (Build-Output in `../www`) unter `/gui/` ausgeliefert.
+
+- Erreichbar unter `http://<hub>:8000/gui/`
+- Der FastAPI-Server setzt für alle `/gui/*`-Antworten die Header `Cross-Origin-Opener-Policy: same-origin` und `Cross-Origin-Embedder-Policy: require-corp`, die der Flutter-WASM-Renderer (skwasm) für `SharedArrayBuffer` benötigt.
+- `www/index.html` muss `<base href="/gui/">` gesetzt haben (nicht `/ui/`).
+
+## Schnellzugriff-Menü ("Mehr")
+
+In der unteren Navigationsleiste befindet sich ganz rechts ein **3-Punkte-Button** (`⋮`) mit einem Aufklapp-Menü:
+
+| Eintrag | Ziel | Verhalten |
+|---------|------|-----------|
+| RemoteAdmin | `/scenes` | interner React-Router-Link |
+| RemoteControl | `/scenes` | interner React-Router-Link (zukünftig eigene Ansicht) |
+| Flutter | `/gui/` | neuer Tab |
+| REST-Interface | `/docs` | neuer Tab |
+| ReDoc | `/redoc` | neuer Tab |
+
+Das Menü schließt sich automatisch bei Klick außerhalb.
 
 ## API-Endpunkte (FastAPI-Hub)
 

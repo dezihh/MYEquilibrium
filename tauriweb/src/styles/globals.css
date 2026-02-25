@@ -121,6 +121,78 @@ body {
   color: var(--primary-hover);
 }
 
+.bottom-nav-menu {
+  position: relative;
+  flex: 0 0 68px;
+  align-self: stretch;
+  display: flex;
+  overflow: visible;
+}
+
+.bottom-nav-menu-trigger {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  transition: color 0.2s;
+  padding: 0;
+  min-width: 0;
+}
+
+.bottom-nav-menu-trigger .dots-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.bottom-nav-menu-trigger .dots-label {
+  display: block;
+  line-height: 1;
+}
+
+.bottom-nav-menu-trigger:hover,
+.bottom-nav-menu-trigger.active {
+  color: var(--primary);
+}
+
+.bottom-nav-menu-panel {
+  position: absolute;
+  bottom: calc(var(--bottom-nav-height) + 8px);
+  right: 8px;
+  min-width: 190px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  z-index: 150;
+}
+
+.bottom-nav-menu-item {
+  border: none;
+  background: none;
+  text-align: left;
+  color: var(--text-primary);
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.bottom-nav-menu-item:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+
 /* Cards */
 .card {
   background-color: var(--bg-card);

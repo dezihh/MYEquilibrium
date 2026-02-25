@@ -47,12 +47,25 @@ Die Funktionen sind sauber nach Domänen getrennt. Die Kernlogik liegt in eigene
 - [config/](config/) – Konfigurationsdateien (Keymaps, RF-Adressen, HA-Creds)
 
 **API & Laufzeit**
-- [Api/app.py](Api/app.py) – FastAPI App, Router-Registrierung
+- [Api/app.py](Api/app.py) – FastAPI App, Router-Registrierung, Static-Mounts (`/ui`, `/gui`) mit SPA-Fallback, COOP/COEP-Middleware für Flutter-WASM
 - [Api/lifespan.py](Api/lifespan.py) – Startup/Shutdown (DB init, Controller, Zeroconf)
 - [main.py](main.py) – Uvicorn Start mit Flags
 
-**UI (späterer Fokus)**
-- [web/](web/) – Tauri Webapp Build UI (aktuell nicht im Fokus)
+**UI**
+- [web/](web/) – Tauri/React-Webapp Build → ausgeliefert unter `/ui/`
+- [www/](www/) – Flutter-Webapp Build → ausgeliefert unter `/gui/`
+- [tauriweb/](tauriweb/) – Quellcode der React/Vite-Webapp
+
+## Web-Endpunkte (Übersicht)
+
+Alle Pfade sind relativ zur Basis-URL des Servers (z. B. `http://<hub>:8000`).
+
+| Pfad | Beschreibung |
+|------|--------------|
+| `/ui/` | React/Tauri-Webapp – Admin- & Verwaltungsoberfläche |
+| `/gui/` | Flutter-Webapp – Benutzeroberfläche (Android/Web) |
+| `/docs` | OpenAPI/Swagger – interaktive REST-Dokumentation (FastAPI) |
+| `/redoc` | ReDoc – alternative REST-Dokumentation (FastAPI) |
 
 ## API-Übersicht (FastAPI)
 
