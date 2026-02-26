@@ -509,6 +509,18 @@ select.form-control option {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
+/* ===== Button Press Animation ===== */
+@keyframes btn-press {
+  0%   { transform: scale(1);    filter: brightness(1); }
+  25%  { transform: scale(0.88); filter: brightness(1.35); }
+  100% { transform: scale(1);    filter: brightness(1); }
+}
+
+.btn-pressed {
+  animation: btn-press 0.28s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+  transform-origin: center;
+}
+
 /* Device type icons */
 .device-type-display::before { content: '📺'; }
 .device-type-amplifier::before { content: '🔊'; }
