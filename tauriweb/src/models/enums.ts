@@ -26,7 +26,7 @@ export const CommandTypeLabel: Record<CommandType, string> = {
   [CommandType.Infrared]: 'Infrarot',
   [CommandType.Bluetooth]: 'Bluetooth',
   [CommandType.Network]: 'Netzwerk',
-  [CommandType.Script]: 'Skript',
+  [CommandType.Script]: 'Shellscript',
   [CommandType.Integration]: 'Integration',
 };
 

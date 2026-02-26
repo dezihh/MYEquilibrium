@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import os
 from asyncio import CancelledError
 from typing import Dict, TYPE_CHECKING, Any
 
@@ -363,7 +364,35 @@ class RemoteController:
             return "All connection attempts failed"
 
     async def send_script_command(self, command: Command):
-        raise HTTPException(status_code=400, detail="Script commands are not implemented yet")
+        if not command.host:
+            raise HTTPException(status_code=400, detail="Script commands require a script path")
+
+        script_path = os.path.expanduser(command.host)
+
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                'bash', script_path,
+                command.command_group.value,
+                command.button.value,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            if proc.returncode != 0:
+                self.logger.error(
+                    f"Script command (id={command.id}) failed (exit {proc.returncode}): {stderr.decode().strip()}"
+                )
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Script exited with code {proc.returncode}: {stderr.decode().strip()}"
+                )
+            else:
+                self.logger.debug(f"Script command (id={command.id}) output: {stdout.decode().strip()}")
+        except HTTPException:
+            raise
+        except Exception as e:
+            self.logger.error(f"Error executing script command (id={command.id}): {e}")
+            raise HTTPException(status_code=500, detail=f"Script execution failed: {str(e)}")
 
     def send_integration_command(self, command: Command):
         if self.ha_manager is None:

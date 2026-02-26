@@ -25,6 +25,8 @@ def create_command(command: CommandBase, session: SessionDep) -> CommandWithRela
         raise HTTPException(status_code=400, detail="Network commands require a method to be set.")
     elif db_command.type == CommandType.BLUETOOTH and not db_command.bt_action and not db_command.bt_media_action:
         raise HTTPException(status_code=400, detail="Bluetooth commands require either an action or a media action.")
+    elif db_command.type == CommandType.SCRIPT and not db_command.host:
+        raise HTTPException(status_code=400, detail="Script commands require a script path (host field).")
     elif db_command.type == CommandType.INTEGRATION and not db_command.integration_action:
         raise HTTPException(status_code=400, detail="Integration commands require an integration action.")
     elif db_command.integration_action in [

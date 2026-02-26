@@ -45,6 +45,9 @@ export default function CreateCommandPage() {
   const [integrationService, setIntegrationService] = useState('');
   const [integrationData, setIntegrationData] = useState('');
 
+  // Shellscript
+  const [scriptPath, setScriptPath] = useState('');
+
   const buttonsForGroup = RemoteButtonsByGroup[group] ?? [];
 
   const handleGroupChange = (g: CommandGroupType) => {
@@ -126,8 +129,8 @@ export default function CreateCommandPage() {
         base.body = integrationData.trim() || null;
       } else {
         base.integration_entity = integrationEntity.trim();
-      }
-    }
+      }    } else if (type === CommandType.Script) {
+      base.host = scriptPath.trim();    }
     return base;
   };
 
@@ -160,6 +163,10 @@ export default function CreateCommandPage() {
     }
     if (type === CommandType.Bluetooth && btType === BluetoothCommandType.RegularKey && btCommand === 'other' && !btKey.trim()) {
       setError('Tastencode ist erforderlich, wenn "other" gewählt ist');
+      return;
+    }
+    if (type === CommandType.Script && !scriptPath.trim()) {
+      setError('Skriptpfad ist erforderlich');
       return;
     }
     setLoading(true); setError(null);
@@ -203,7 +210,7 @@ export default function CreateCommandPage() {
         <div className="form-group">
           <label className="form-label">Typ</label>
           <select className="form-control" value={type} onChange={e => handleTypeChange(e.target.value as CommandType)}>
-            {Object.values(CommandType).filter(t => t !== CommandType.Script).map(t => (
+            {Object.values(CommandType).map(t => (
               <option key={t} value={t}>{CommandTypeLabel[t]}</option>
             ))}
           </select>
@@ -278,6 +285,22 @@ export default function CreateCommandPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* ===== Shellscript Section ===== */}
+        {type === CommandType.Script && (
+          <div className="form-group">
+            <label className="form-label">Skriptpfad</label>
+            <input
+              className="form-control"
+              value={scriptPath}
+              onChange={e => setScriptPath(e.target.value)}
+              placeholder="/home/pi/scripts/mein_script.sh"
+            />
+            <div style={{ marginTop: 6, fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              Das Skript wird aufgerufen als: <code>bash &lt;pfad&gt; &lt;befehlsgruppe&gt; &lt;taste&gt;</code>
+            </div>
+          </div>
         )}
 
         {/* ===== Integration Section ===== */}

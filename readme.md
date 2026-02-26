@@ -23,6 +23,7 @@ If you run into any issues, check the [Troubleshooting](#troubleshooting) sectio
 ### Todo
 - [ ] Expand support for physical remotes
 - [x] Home Assistant integration (WIP: core actions + generic service calls)
+- [x] Shellscript-Befehle (beliebige Bash-Skripte mit Befehlsgruppe und Taste als Parameter)
 - [ ] Philips Hue integration?
 - [ ] Amazon Alexa integration?
 - [ ] Improve set up guide
@@ -149,6 +150,46 @@ Router: [Api/routers/websockets.py](Api/routers/websockets.py)
 **Zentrale Orchestrierung:** [RemoteController/RemoteController.py](RemoteController/RemoteController.py)
 - Erzeugt/verwaltet: BleKeyboard, IrManager, RfManager, HaManager, AsyncQueueManager
 - Exponiert API-Funktionen für alle Router
+
+## Shellscript-Befehle
+
+Befehle vom Typ `script` führen ein beliebiges Bash-Skript auf dem Hub aus.
+
+**Konfiguration im Frontend (Settings → Befehle → Neu)**
+- Typ: `Shellscript` auswählen
+- Skriptpfad: absoluter Pfad zum Skript auf dem Hub, z.B. `/home/pi/scripts/mein_script.sh`
+
+**Aufruf-Konvention**
+
+Das Skript wird beim Ausführen des Befehls wie folgt aufgerufen:
+```bash
+bash <pfad> <befehlsgruppe> <taste>
+```
+Beispiel:
+```bash
+bash /home/pi/scripts/volume.sh volume volume_up
+```
+
+**Parameter**
+| Parameter | Wert | Beispiel |
+|-----------|------|---------|
+| `$1` | Befehlsgruppe (`CommandGroupType`) | `volume`, `power`, `navigation`, … |
+| `$2` | Taste (`RemoteButton`) | `volume_up`, `power_toggle`, … |
+
+**Rückgabe / Fehlerbehandlung**
+- Exit-Code `0`: Erfolg, Ausgabe (stdout) wird geloggt (debug-Level)
+- Exit-Code ≠ `0`: Fehler, stderr wird geloggt (error-Level), HTTP 500 zurückgegeben
+
+**Minimales Beispielskript**
+```bash
+#!/bin/bash
+GROUP=$1
+BUTTON=$2
+echo "Befehl: $GROUP / $BUTTON"
+# Eigene Logik hier…
+```
+
+---
 
 ## Home-Assistant Integration (aktueller Stand)
 
