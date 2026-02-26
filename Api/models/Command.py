@@ -50,6 +50,7 @@ class Command(CommandBase, table=True):
 
 class CommandWithRelationships(CommandBase):
     id: int | None
+    ir_action: Any = Field(default=[])
     device: Optional["Device"] = None
     macros: list["Macro"] = []
 

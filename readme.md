@@ -57,6 +57,27 @@ Die Funktionen sind sauber nach Domänen getrennt. Die Kernlogik liegt in eigene
 - [www/](www/) – Flutter-Webapp Build → ausgeliefert unter `/gui/`
 - [tauriweb/](tauriweb/) – Quellcode der React/Vite-Webapp
 
+## React-Webapp (tauriweb) – UI-Features
+
+Quellcode: [tauriweb/src/](tauriweb/src/), Build-Output: [web/](web/), erreichbar unter `/ui/`.
+
+### Button-Press-Animation
+Jeder Tap auf einen Button (Fernbedienungstasten, Aktionsbuttons, Navigation) löst eine kurze Scale+Brightness-Animation aus (280 ms). Implementiert als globaler `pointerdown`-Listener in [App.tsx](tauriweb/src/App.tsx) + `@keyframes btn-press` in [globals.css](tauriweb/src/styles/globals.css). Funktioniert auf allen `<button>`-, `.ctrl-btn`-, `.btn`- und `.fab`-Elementen ohne Einzelanpassungen.
+
+### Befehlsliste – Detail-Popup
+In der Befehlsliste (`/ui/settings/commands`) öffnet der 🔍-Button ein modales Popup mit allen gespeicherten Eigenschaften des Befehls:
+
+| Typ | Angezeigte Felder |
+|---|---|
+| Alle | ID, Name, Gerät, Typ, Gruppe, Taste |
+| Infrarot | + Anzahl Pulse, vollständiger IR-Code (Mark/Space-Array) |
+| Bluetooth | + Taste / Medientaste |
+| Netzwerk | + URL, HTTP-Methode, Body |
+| Integration | + Aktion, Entity, Daten |
+| Shellscript | + Skriptpfad |
+
+Klick auf den Backdrop oder ✕ schließt das Popup. Implementiert in [CommandListPage.tsx](tauriweb/src/pages/CommandListPage.tsx), Styles in [globals.css](tauriweb/src/styles/globals.css) (`.modal-backdrop`, `.modal-box`).
+
 ## Web-Endpunkte (Übersicht)
 
 Alle Pfade sind relativ zur Basis-URL des Servers (z. B. `http://<hub>:8000`).
@@ -96,6 +117,8 @@ Router: [Api/routers/commands.py](Api/routers/commands.py)
 - POST `/commands/` – Befehl erstellen
 - POST `/commands/{id}/send` – Befehl senden
 - DELETE `/commands/{id}` – Befehl löschen
+
+**Response-Modell `CommandWithRelationships`** enthält alle Felder inkl. `ir_action` (JSON-Array mit Mark/Space-Werten in Mikrosekunden).
 
 ### Scenes
 Router: [Api/routers/scenes.py](Api/routers/scenes.py)

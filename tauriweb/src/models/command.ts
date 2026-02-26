@@ -14,6 +14,7 @@ export interface Command {
   bt_media_action: string | null;
   integration_action: string | null;
   integration_entity: string | null;
+  ir_action: number[] | null;
 }
 
 export interface CommandCreate {
