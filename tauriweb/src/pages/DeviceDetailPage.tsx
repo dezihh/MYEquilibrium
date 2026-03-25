@@ -1,8 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi';
 import apiClient from '../api/apiClient';
-import CommonControls from '../components/CommonControls';
-import { RemoteButton, CommandGroupType } from '../models/enums';
+import RemotePanel from '../components/RemotePanel';
 
 export default function DeviceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,10 +17,6 @@ export default function DeviceDetailPage() {
     catch (e) { alert(`Fehler: ${e}`); }
   };
 
-  const powerCommands = device.commands.filter(
-    c => c.command_group === CommandGroupType.Power
-  );
-
   return (
     <div>
       <div className="card">
@@ -31,16 +26,6 @@ export default function DeviceDetailPage() {
             <span className="badge badge-primary">{device.type}</span>
             {device.manufacturer && <span className="card-subtitle" style={{ marginTop: 4 }}>{device.manufacturer}{device.model ? ` – ${device.model}` : ''}</span>}
           </div>
-          {powerCommands.length > 0 && (
-            <div className="btn-group">
-              {powerCommands.map(cmd => (
-                <button key={cmd.id} className="btn btn-ghost btn-sm btn-icon" title={cmd.name}
-                  onClick={() => apiClient.sendCommand(cmd.id).catch(e => alert(`Fehler: ${e}`))}>
-                  {cmd.button === RemoteButton.PowerOff ? '🔴' : cmd.button === RemoteButton.PowerOn ? '🟢' : '⏻'}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
         <div className="btn-group" style={{ marginTop: 8 }}>
           <button className="btn btn-secondary" onClick={() => navigate(`/devices/edit/${device.id}`)}>✏️ Bearbeiten</button>
@@ -50,7 +35,7 @@ export default function DeviceDetailPage() {
 
       <div className="card">
         <div className="card-title" style={{ marginBottom: 12 }}>Fernbedienung</div>
-        <CommonControls devices={[device]} />
+        <RemotePanel device={device} />
       </div>
     </div>
   );

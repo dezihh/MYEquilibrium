@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -64,8 +65,8 @@ def app_generator(dev: bool = False):
     app.include_router(system.router)
 
     @app.get("/", include_in_schema=False)
-    def root_info():
-        return ServerInfo()
+    def root_redirect():
+        return RedirectResponse(url="/ui/")
 
     @app.get("/info", tags=["Info"], response_model=ServerInfo)
     def app_info():

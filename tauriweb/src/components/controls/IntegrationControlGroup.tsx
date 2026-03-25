@@ -1,6 +1,6 @@
 import apiClient from '../../api/apiClient';
 import { Command } from '../../models/command';
-import { CommandGroupType, CommandType } from '../../models/enums';
+import { CommandType } from '../../models/enums';
 
 interface Props {
   commands: Command[];
@@ -8,8 +8,7 @@ interface Props {
 
 export default function IntegrationControlGroup({ commands }: Props) {
   const integrationCommands = commands.filter(
-    (command) =>
-      command.type === CommandType.Integration || command.command_group === CommandGroupType.Other
+    (command) => command.type === CommandType.Integration
   );
 
   if (integrationCommands.length === 0) return null;

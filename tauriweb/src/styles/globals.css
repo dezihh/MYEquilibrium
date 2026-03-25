@@ -678,3 +678,299 @@ select.form-control option {
   grid-template-columns: repeat(5, 44px);
   gap: 8px;
 }
+
+/* ===== RemotePanel ===== */
+.remote-panel {
+  max-width: 340px;
+  margin: 0 auto;
+  padding: 4px 0 80px 0; /* bottom: FAB clearance */
+}
+
+/* Remote body – the visible "device" frame */
+.remote-body {
+  background: #0d1b2a;
+  border: 2px solid #2a3f5f;
+  border-radius: 28px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  padding: 24px 20px 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.remote-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* Horizontal divider with centered label */
+.remote-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 10px 0 10px 0;
+}
+.remote-divider::before,
+.remote-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.remote-divider span {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #4a6080;
+  white-space: nowrap;
+}
+
+/* Power row */
+.remote-power-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Primary ctrl-btn (PowerToggle) – slightly larger, accent color */
+.ctrl-btn--primary {
+  width: 52px;
+  height: 52px;
+  font-size: 1.25rem;
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 14px rgba(85, 138, 144, 0.45);
+}
+.ctrl-btn--primary:hover {
+  background: var(--primary-hover);
+}
+.ctrl-btn--primary:active {
+  background: var(--primary-hover);
+}
+
+/* Numeric keypad */
+.remote-numeric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  gap: 8px;
+  justify-content: center;
+}
+
+/* -- Icon-Zentrierung (Lucide SVG) ----------------*/
+.ctrl-btn svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* D-Pad: 3×3 Grid, Ecken leer */
+.dpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 6px;
+  justify-content: center;
+}
+.dpad-grid > span {
+  /* leere Eckzellen */
+}
+
+/* ══════════════════════════════════════════════════════
+   Blüten-D-Pad  —  finale Geometrie
+   Container: 200×200px  |  Arm-Stärke: 48px
+   Arm start: (200-48)/2 = 76px → Arme reichen Kante-zu-Kante
+   Arme: je eine Hälfte (0→100 bzw 100→200), Pfeil an Außentip
+   Ecken: Innenkante auf 32px → direkt neben Kreuzarm
+   OK: 58px Kreis, zentriert bei top/left=71px
+   ══════════════════════════════════════════════════════ */
+.nav-dpad-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-dpad-outer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+/* ── Richtungs-Pills ──────────────────────────────── */
+.nav-dir {
+  position: absolute;
+}
+.nav-dir .ctrl-btn,
+.nav-dir > div {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 9999px;          /* echte Pill-Form */
+  border: none !important;
+  background: #1e3358 !important;
+  color: #c8d8f0 !important;
+}
+.nav-dir .ctrl-btn svg {
+  display: block;
+  color: #c8d8f0;
+}
+.nav-dir .ctrl-btn:hover {
+  background: #28437a !important;
+}
+.nav-dir .ctrl-btn:active {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+/* Pill-Positionen: Arm-Stärke 48px, zentriert bei (200-48)/2=76px */
+/* Arm-Spitzen bündig mit Ecken-Außenkante (16px); Arm-Länge: 100-16=84px */
+/* ↑  oben, von Außenkante Ecken bis Mitte */
+.nav-up   { left: 76px; top: 16px;    width: 48px; height: 84px; }
+/* ↓  unten */
+.nav-down { left: 76px; bottom: 16px; width: 48px; height: 84px; }
+/* ←  links */
+.nav-left { top: 76px;  left: 16px;   width: 84px; height: 48px; }
+/* →  rechts */
+.nav-right{ top: 76px;  right: 16px;  width: 84px; height: 48px; }
+
+/* Pfeil-Icons an die Außenspitze des jeweiligen Arms */
+.nav-up    .ctrl-btn { align-items: flex-start !important;  padding-top: 10px; }
+.nav-down  .ctrl-btn { align-items: flex-end !important;    padding-bottom: 10px; }
+.nav-left  .ctrl-btn { justify-content: flex-start !important; padding-left: 10px; }
+.nav-right .ctrl-btn { justify-content: flex-end !important;   padding-right: 10px; }
+
+/* ── OK-Button ─────────────────────────────────────── */
+.nav-ok {
+  position: absolute;
+  top: 71px; left: 71px;   /* (200-58)/2 = 71 */
+  width: 58px; height: 58px;
+  z-index: 2;
+}
+.nav-ok .ctrl-btn,
+.nav-ok > div {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+}
+
+/* ── Ecken ─────────────────────────────────────────── */
+/* Ecken-Außenkante = Arm-Außenkante (16px); Innenkante: 16+44=60px; Abstand zum Arm: 76-60=16px */
+.nav-corner {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  z-index: 3;
+}
+.nav-corner .ctrl-btn,
+.nav-corner > div { width: 100% !important; height: 100% !important; }
+.nav-tl { top: 16px;   left: 16px;  }
+.nav-tr { top: 16px;   right: 16px; }
+.nav-bl { bottom: 16px; left: 16px;  }
+.nav-br { bottom: 16px; right: 16px; }
+
+/* Guide/Info-Extras unterhalb D-Pad */
+.nav-extras-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Other / custom commands row */
+.remote-other-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 280px;
+}
+.remote-other-row .ctrl-btn {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  width: auto;
+  height: auto;
+  min-width: 44px;
+  border-radius: 8px;
+}
+
+/* ctrl-btn inside remote-body: slightly brighter to stand out from dark frame */
+.remote-body .ctrl-btn {
+  background: #162644;
+  border-color: #2a4060;
+}
+.remote-body .ctrl-btn:hover {
+  background: #1e3155;
+}
+.remote-body .ctrl-btn:active {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+/* Keep primary power button unaffected */
+.remote-body .ctrl-btn--primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.remote-body .ctrl-btn--primary:hover {
+  background: var(--primary-hover);
+}
+
+/* Accent btn – play/playpause main button, slightly highlighted */
+.ctrl-btn--accent {
+  background: #1a3a60;
+  border-color: #3a6090;
+  color: #7ec8e3;
+}
+.remote-body .ctrl-btn--accent {
+  background: #1a3a60;
+  border-color: #3a6090;
+  color: #7ec8e3;
+}
+.remote-body .ctrl-btn--accent:hover {
+  background: #224a78;
+}
+.remote-body .ctrl-btn--accent:active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* Colored remote buttons (Red/Green/Yellow/Blue) */
+.colored-btn {
+  width: 36px !important;
+  height: 16px !important;
+  border-radius: 6px !important;
+  border-width: 1px;
+  opacity: 0.9;
+}
+.colored-btn:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+/* Transport group layout */
+.transport-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.transport-main-row {
+  display: grid;
+  grid-template-columns: repeat(5, 44px);
+  gap: 6px;
+}
+
+.transport-secondary-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}

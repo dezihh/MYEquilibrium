@@ -4,18 +4,22 @@ import CommandButtonIfExists from './CommandButtonIfExists';
 
 interface Props { commands: Command[]; }
 
-export default function NavigationControlGroup({ commands }: Props) {
+// D-Pad: 3×3 Grid, Ecken leer — reines Richtungskreuz mit OK in der Mitte
+export default function DPadControlGroup({ commands }: Props) {
   return (
-    <div className="ctrl-grid-3" style={{ maxWidth: 165 }}>
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Exit} />
+    <div className="dpad-grid">
+      {/* Row 1 */}
+      <span />
       <CommandButtonIfExists commands={commands} button={RemoteButton.DirectionUp} />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Guide} />
+      <span />
+      {/* Row 2 */}
       <CommandButtonIfExists commands={commands} button={RemoteButton.DirectionLeft} />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Select} />
+      <CommandButtonIfExists commands={commands} button={RemoteButton.Select} primary />
       <CommandButtonIfExists commands={commands} button={RemoteButton.DirectionRight} />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Menu} />
+      {/* Row 3 */}
+      <span />
       <CommandButtonIfExists commands={commands} button={RemoteButton.DirectionDown} />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Back} />
+      <span />
     </div>
   );
 }

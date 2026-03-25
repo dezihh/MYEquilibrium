@@ -1,16 +1,36 @@
+import apiClient from '../../api/apiClient';
 import { Command } from '../../models/command';
 import { RemoteButton } from '../../models/enums';
-import CommandButtonIfExists from './CommandButtonIfExists';
 
 interface Props { commands: Command[]; }
 
+const COLOR_MAP: Partial<Record<RemoteButton, string>> = {
+  [RemoteButton.Red]:    '#c0392b',
+  [RemoteButton.Green]:  '#27ae60',
+  [RemoteButton.Yellow]: '#f39c12',
+  [RemoteButton.Blue]:   '#2980b9',
+};
+
+const BUTTONS = [RemoteButton.Red, RemoteButton.Green, RemoteButton.Yellow, RemoteButton.Blue];
+
 export default function ColoredButtonsControlGroup({ commands }: Props) {
+  const present = BUTTONS.filter(b => commands.some(c => c.button === b));
+  if (present.length === 0) return null;
+
   return (
-    <div className="ctrl-grid-4" style={{ maxWidth: 220 }}>
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Red} color="#ef5350" />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Green} color="#66bb6a" />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Yellow} color="#ffa726" />
-      <CommandButtonIfExists commands={commands} button={RemoteButton.Blue} color="#42a5f5" />
+    <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+      {present.map(button => {
+        const cmd = commands.find(c => c.button === button)!;
+        return (
+          <button
+            key={button}
+            className="ctrl-btn colored-btn"
+            style={{ background: COLOR_MAP[button], borderColor: COLOR_MAP[button] }}
+            title={cmd.name}
+            onClick={() => apiClient.sendCommand(cmd.id).catch(e => alert(`Fehler: ${e}`))}
+          />
+        );
+      })}
     </div>
   );
 }
